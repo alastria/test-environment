@@ -32,6 +32,6 @@ Ahora, si queremos disponer de un explorador de bloques y entorno de desarrollo 
 $ bin/start_cakeshop.sh
 ```
 
-**NOTA**: Por razones de tamaño del fichero debe descargarse de a la carpeta `alastria/cakeshop`
+**NOTA**: Por razones de tamaño del fichero debe descargarse de [aquí](https://github.com/alastria/cakeshop/releases/download/v0.10.0-alastria/cakeshop.war) a la carpeta `alastria/cakeshop`
 
 Por último, para testear que la red despliega contratos, se puede utilizar el projecto [truffle](truffle/README.md).
