@@ -29,7 +29,7 @@ if [[ "$CARPETA" == "validator" ]]; then
 else
 	nohup constellation-node ~/alastria/"$CARPETA"/constellation/constellation.conf 2>> ~/alastria/logs/constellation_"$CARPETA"_"${_TIME}".log &
 	sleep 15
-	PRIVATE_CONFIG=~/alastria/"$CARPETA"/constellation/constellation.conf nohup geth --datadir ~/alastria/"$CARPETA" --debug $GLOBAL_ARGS 2>> ~/alastria/logs/quorum_"$CARPETA"_"${_TIME}".log &
+	nohup PRIVATE_CONFIG=~/alastria/"$CARPETA"/constellation/constellation.conf geth --datadir ~/alastria/"$CARPETA" --debug $GLOBAL_ARGS 2>> ~/alastria/logs/quorum_"$CARPETA"_"${_TIME}".log &
 fi
 
 echo "Verify if ~/alastria/logs/ have new files."
