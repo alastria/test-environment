@@ -27,7 +27,7 @@ func NewQuorumServices(prefijo string) QuorumServices {
 	}
 	strport = os.Getenv("QUORUM_PORT")
 	if len(strport) == 0 {
-		port = 22001
+		port = 22000
 	} else {
 		port, _ = strconv.Atoi(strport)
 	}
