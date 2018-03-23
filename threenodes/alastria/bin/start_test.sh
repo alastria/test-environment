@@ -53,6 +53,23 @@ verbosity = 2
 EOF
 }
 
+check_port() {
+	PORT_TO_TEST="$1"
+	RETVAL=1
+	while [ $RETVAL -ne 0 ]
+	do
+		set +u
+		set +e
+		netcat -z -v localhost $PORT_TO_TEST
+		RETVAL=$?
+		set -u
+		set -e	
+		[ $RETVAL -eq 0 ] && echo "[*] constellation node at $PORT_TO_TEST is now up."
+		[ $RETVAL -ne 0 ] && sleep 1
+		
+	done
+}
+
 PUERTO=0
 if [[ "$CARPETA" == "validator" ]]; then
 	PUERTO=0
@@ -77,7 +94,7 @@ else
 	fi
 	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" "${PWD}" "${CARPETA}" > "${PWD}"/"$CARPETA"/constellation/constellation.conf
 	nohup constellation-node "${PWD}"/"$CARPETA"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$CARPETA"_"${_TIME}".log &
-	sleep 15
+	check_port "900$PUERTO"
 	nohup env PRIVATE_CONFIG="${PWD}"/"$CARPETA"/constellation/constellation.conf geth --datadir "${PWD}"/"$CARPETA" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$CARPETA"_"${_TIME}".log &
 fi
 
