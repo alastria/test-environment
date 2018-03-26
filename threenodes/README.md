@@ -16,6 +16,12 @@ Independientemente de donde se realize la descarga del repositorio, el entorno e
 $ ln -s alastria $HOME/alastria
 ```
 
+Utilize eth-netstats como panel de control de la red utilizando:
+
+```
+$ bin/start_ethstats.sh
+```
+
 Para arrancar los 3 nodos quorum:
 
 ```
