@@ -56,18 +56,21 @@ EOF
 check_port() {
 	PORT_TO_TEST="$1"
 	RETVAL=1
+	
+	set +u
+	set +e
+
 	while [ $RETVAL -ne 0 ]
 	do
-		set +u
-		set +e
 		netcat -z -v localhost $PORT_TO_TEST
 		RETVAL=$?
-		set -u
-		set -e	
 		[ $RETVAL -eq 0 ] && echo "[*] constellation node at $PORT_TO_TEST is now up."
 		[ $RETVAL -ne 0 ] && sleep 1
 		
 	done
+
+	set -u
+	set -e	
 }
 
 PUERTO=0
