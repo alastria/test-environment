@@ -32,11 +32,13 @@ module.exports = function(deployer) {
         }
     }
 
+    web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
     Counter.new(0).then(function(instance) {
         if (counteri === null) {
             counteri = instance;
         }
         console.log("Address: " + instance.contract.address);
+        web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
         instance.add().then(add);
     });
 
