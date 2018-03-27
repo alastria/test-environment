@@ -20,7 +20,7 @@ module.exports = function(deployer) {
     }
 
     function next() {
-        if (contador == process.argv[6]) {
+        if (contador == parseInt(process.argv[6]) {
             counteri.get().then((retorno) => {
                 console.log("Final value: " + retorno);
                 return retorno;
