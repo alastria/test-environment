@@ -4,7 +4,6 @@ var Counter = artifacts.require("TestAlastriaCounter");
 
 module.exports = function(deployer) {
     eval(fs.readFileSync('logFormat.js')+'');
-    web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
     var contador = 0;
     var counteri = null;
     console.log("Se generan " + process.argv[6] + " trx. por contrato.");
@@ -26,6 +25,7 @@ module.exports = function(deployer) {
                 return retorno;
             });
         } else {
+            web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
             counteri.add().then((err, retorno) => {
                 return add(err, retorno);
             });
