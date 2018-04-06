@@ -13,6 +13,7 @@ if [[ ! -d "./eth-netstats" ]]; then
     cd eth-netstats
     npm install
     sudo npm install -g grunt-cli
+    grunt
 else 
     cd eth-netstats
 fi
