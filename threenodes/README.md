@@ -13,7 +13,7 @@ Para probar este entorno, necesitas Ubuntu Linux 16.04 o Centos 7 utilizando el 
 Independientemente de donde se realize la descarga del repositorio, el entorno está pensado para ejecutarse desde `$HOME/alastria`, por lo que, lo más sencillo es realizar un enlace simbólico estándo en la carpeta threenodes:
 
 ```
-$ ln -s alastria $HOME/alastria
+$ ln -s $(pwd)/alastria $HOME/alastria
 ```
 
 Utilize eth-netstats como panel de control de la red utilizando:
