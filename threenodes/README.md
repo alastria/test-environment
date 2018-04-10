@@ -16,7 +16,7 @@ Independientemente de donde se realize la descarga del repositorio, el entorno e
 $ ln -s $(pwd)/alastria $HOME/alastria
 ```
 
-Utilize eth-netstats como panel de control de la red utilizando:
+Ahora, desde la carpeta `$HOME/alastria`, utilize eth-netstats como panel de control de la red utilizando:
 
 ```
 $ bin/start_ethstats.sh
