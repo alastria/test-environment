@@ -16,6 +16,13 @@ Independientemente de donde se realize la descarga del repositorio, el entorno e
 $ ln -s $(pwd)/alastria $HOME/alastria
 ```
 
+Si no tiene instalado nodejs:
+
+```
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
 Ahora, desde la carpeta `$HOME/alastria`, utilize eth-netstats como panel de control de la red utilizando:
 
 ```
