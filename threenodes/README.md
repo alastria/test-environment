@@ -10,7 +10,7 @@ Para probar este entorno, necesitas Ubuntu Linux 16.04 o Centos 7 utilizando el 
 
 ## Puesta en marcha del entorno
 
-Independientemente de donde se realize la descarga del repositorio, el entorno está pensado para ejecutarse desde `$HOME/alastria`, por lo que, lo más sencillo es realizar un enlace simbólico estándo en la carpeta threenodes:
+Independientemente de donde se realice la descarga del repositorio, el entorno está pensado para ejecutarse desde `$HOME/alastria`, por lo que, lo más sencillo es realizar un enlace simbólico estándo en la carpeta threenodes:
 
 ```
 $ ln -s $(pwd)/alastria $HOME/alastria
