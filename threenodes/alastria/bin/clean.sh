@@ -8,6 +8,7 @@ else
     echo "Preparing the node for a clean restart ..."
     rm -Rf ./logs/*
     rm -Rf */geth/chainData
+    rm -Rf */geth/chaindata
     rm -Rf */geth/nodes
     rm */geth/LOCK
     rm */geth/transactions.rpl
