@@ -235,3 +235,26 @@
 09:11:54.928857 table@remove removed @60
 09:11:54.930587 table@remove removed @61
 09:11:54.931490 table@remove removed @62
+=============== Apr 18, 2018 (CEST) ===============
+12:32:10.347475 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:32:10.368301 version@stat F·[0 3] S·5MiB[0B 5MiB] Sc·[0.00 0.05]
+12:32:10.368312 db@open opening
+12:32:10.368361 journal@recovery F·1
+12:32:10.369122 journal@recovery recovering @63
+12:32:10.493833 memdb@flush created L0@68 N·22879 S·788KiB "n:\x00..ing,v382857":"n:\xff..ing,v385614"
+12:32:10.500683 version@stat F·[1 3] S·6MiB[788KiB 5MiB] Sc·[0.25 0.05]
+12:32:10.560962 db@janitor F·9 G·3
+12:32:10.560977 db@janitor removing manifest-11
+12:32:10.561010 db@janitor removing table-12
+12:32:10.561036 db@janitor removing journal-10
+12:32:10.561165 db@open done T·192.846135ms
+12:32:11.026488 table@compaction L0·1 -> L1·3 S·6MiB Q·394270
+12:32:11.229291 table@build created L1@71 N·32114 S·2MiB "n:\x00..ing,v262184":"n:[..ing,v201797"
+12:32:11.608917 table@build created L1@72 N·32146 S·2MiB "n:[..ing,v283065":"n:\xb9..ing,v384902"
+12:32:11.726620 table@build created L1@73 N·24244 S·1MiB "n:\xb9..ing,v193907":"version,v1"
+12:32:11.726707 version@stat F·[0 3] S·5MiB[0B 5MiB] Sc·[0.00 0.06]
+12:32:11.751550 table@compaction committed F-1 S-545KiB Ke·0 D·19639 T·724.981551ms
+12:32:11.751839 table@remove removed @68
+12:32:11.752251 table@remove removed @65
+12:32:11.752570 table@remove removed @66
+12:32:11.752811 table@remove removed @67

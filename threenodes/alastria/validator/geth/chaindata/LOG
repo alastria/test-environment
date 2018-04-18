@@ -160,3 +160,22 @@
 08:55:48.487069 table@compaction committed F-1 S-27KiB Ke·0 D·652 T·56.298406ms
 08:55:48.487281 table@remove removed @37
 08:55:48.487772 table@remove removed @36
+=============== Apr 18, 2018 (CEST) ===============
+12:32:06.798126 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:32:06.826001 version@stat F·[0 1] S·1MiB[0B 1MiB] Sc·[0.00 0.01]
+12:32:06.826022 db@open opening
+12:32:06.826097 journal@recovery F·1
+12:32:06.827618 journal@recovery recovering @38
+12:32:06.888596 memdb@flush created L0@41 N·6806 S·413KiB "!\xe9\x9e..d\xfe\xed,v33310":"\x85\xd8\xec..\x13_\x9e,v33315"
+12:32:06.890227 version@stat F·[1 1] S·1MiB[413KiB 1MiB] Sc·[0.25 0.01]
+12:32:06.971901 db@janitor F·7 G·3
+12:32:06.971917 db@janitor removing manifest-13
+12:32:06.979991 db@janitor removing table-14
+12:32:06.980053 db@janitor removing journal-12
+12:32:06.980097 db@open done T·154.062387ms
+12:32:07.048905 table@compaction L0·1 -> L1·1 S·1MiB Q·37699
+12:32:07.161872 table@build created L1@44 N·25242 S·1MiB "\x02 Y..O\xe9\t,v30145":"\xff\xee\xcb..\x82H\x00,v30116"
+12:32:07.161933 version@stat F·[0 1] S·1MiB[0B 1MiB] Sc·[0.00 0.02]
+12:32:07.195005 table@compaction committed F-1 S-93KiB Ke·0 D·2270 T·146.055977ms
+12:32:07.195228 table@remove removed @41
+12:32:07.195620 table@remove removed @40
