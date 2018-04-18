@@ -11,3 +11,4 @@ eth-netstats/
 constellation.conf
 transactions.rpl
 validator/geth/nodes/
+alastria-node/
