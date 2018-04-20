@@ -1,2 +1,7 @@
 Fatal: Error starting protocol stack: listen udp :21000: bind: address already in use
 Fatal: Error starting protocol stack: listen udp :21000: bind: address already in use
+Fatal: Error starting protocol stack: open /home/arocha/alastria-repos/test-environment/utils/network/main/geth/LOCK: permission denied
+Fatal: Error starting protocol stack: open /home/arocha/alastria-repos/test-environment/utils/network/main/geth/LOCK: permission denied
+Fatal: Error starting protocol stack: datadir already used by another process
+Fatal: Error starting protocol stack: datadir already used by another process
+Fatal: Error starting protocol stack: datadir already used by another process

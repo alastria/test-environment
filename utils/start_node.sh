@@ -99,7 +99,9 @@ if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == 
 else
 	# TODO: Add every regular node for the constellation communication
 	OTHER_NODES="http://127.0.0.1:9001/"
-	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" '"${PWD}"/network' "${NODE_NAME}" > "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf
+	echo "generate: "$PWD
+	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" "${PWD}"/network "${NODE_NAME}" > "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf
+	PWD="$(pwd)"
 	nohup constellation-node "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
 	check_port $CONSTELLATION_PORT
 	nohup env PRIVATE_CONFIG="${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
