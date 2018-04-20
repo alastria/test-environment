@@ -1,2 +1,2 @@
 fabric8-analytics.log
-utils/tls*
+infrastructure/testnet/tls*

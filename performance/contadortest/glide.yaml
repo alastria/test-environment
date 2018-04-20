@@ -1,0 +1,12 @@
+package: github.com/alastria/contadortest
+import:
+- package: github.com/ethereum/go-ethereum
+  subpackages:
+  - accounts/abi
+  - accounts/abi/bind
+  - common
+  - core/types
+  - ethclient
+  - rpc
+#- package: github.com/getamis/eth-client
+#  version: ~1.0.1

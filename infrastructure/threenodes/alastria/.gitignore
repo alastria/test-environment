@@ -1,0 +1,14 @@
+validator/geth/nodes/
+general1/geth/nodes/
+general2/geth/nodes/
+general1/geth/chaindata/
+general2/geth/chaindata/
+validator/geth/chaindata/
+tls*
+nohup.out
+logs/
+eth-netstats/
+constellation.conf
+transactions.rpl
+validator/geth/nodes/
+alastria-node/

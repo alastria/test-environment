@@ -1,0 +1,7 @@
+.vscode
+contadortest
+fabric8-analytics.log
+services/felicitador_service.go
+services/counter_priv_service.go
+services/counter_priv_service_test.go
+services/bindings/Felicitador.go
