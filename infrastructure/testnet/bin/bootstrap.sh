@@ -2,11 +2,14 @@
 echo "[*] Installing required dependencies"
 PWD="${pwd}"
 
-cd ~
-git clone https://github.com/alastria/alastria-node.git
+sudo apt-get install wget git sudo netcat npm nodejs
+# When using docker images
+# sudo apt-get install wget git sudo netcat
+
+git clone https://github.com/alastria/alastria-node.git  
 cd alastria-node/
 git checkout develop
 
 cd ..
-ln -s $(pwd)/alastria $HOME/alastria
-sudo -H ~/alastria/alastria/alastria-node/scripts/bootstrap.sh
+sudo -H $PWD/alastria-node/scripts/bootstrap.sh
+rm alastria-node
