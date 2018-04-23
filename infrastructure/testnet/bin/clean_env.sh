@@ -1,7 +1,7 @@
 #!/bin/bash
 # Prepare the node for a clean restart
 
-echo "[!!] Run this script from the directory test-environment/utils/bin/"
+echo "[!!] Run this script from the directory test-environment/infrastructure/testnet"
 echo "[*] Preparing to clean the environment"
 rm -Rf ./network/*
 touch ./network/__env__

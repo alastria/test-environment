@@ -15,6 +15,8 @@ mapfile -t NODE_TYPE <"${PWD}"/network/"$NODE_NAME"/NODE_TYPE
 NODE_IP="127.0.0.1"
 ETH_STATS_IP="127.0.0.1"
 
+echo "[*] Starting $NODE_NAME"
+
 generate_conf() {
    #define parameters which are passed in.
    NODE_IP="$1"
@@ -30,12 +32,12 @@ url = "http://$NODE_IP:$CONSTELLATION_PORT/"
 # Port to listen on for the public API
 port = $CONSTELLATION_PORT
 # Socket file to use for the private API / IPC
-socket = "$PWD/$NODE_NAME/constellation/constellation.ipc"
+socket = "$PWD/$NODE_NAME/constellation/c.ipc"
 # Initial (not necessarily complete) list of other nodes in the network.
 # Constellation will automatically connect to other nodes not in this list
 # that are advertised by the nodes below, thus these can be considered the
 # "boot nodes."
-othernodes = ["$OTHER_NODES"]
+othernodes = [$OTHER_NODES]
 # The set of public keys this node will host
 publickeys = ["$PWD/$NODE_NAME/constellation/keystore/node.pub"]
 # The corresponding set of private keys
@@ -93,14 +95,14 @@ else
 	PUERTO=7
 fi
 
+OTHER_NODES="`cat ${PWD}/identities/CONSTELLATION_NODES`"
+echo $OTHER_NODES
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PUERTO --port 2100$PUERTO --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 CONSTELLATION_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup geth --datadir "${PWD}"/network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
 	# TODO: Add every regular node for the constellation communication
-	OTHER_NODES="http://127.0.0.1:9001/"
-	echo "generate: "$PWD
 	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" "${PWD}"/network "${NODE_NAME}" > "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf
 	PWD="$(pwd)"
 	nohup constellation-node "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
