@@ -1,2 +1,3 @@
 fabric8-analytics.log
 infrastructure/testnet/tls*
+infrastructure/testnet/network/*/
