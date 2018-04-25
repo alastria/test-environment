@@ -12,4 +12,4 @@ git checkout develop
 
 cd ..
 sudo -H $PWD/alastria-node/scripts/bootstrap.sh
-rm alastria-node
+rm -rf alastria-node
