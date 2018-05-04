@@ -10,6 +10,7 @@ _TIME=$(date +%Y%m%d%H%M%S)
 
 if [[ ! -d "./eth-netstats" ]]; then
     git clone https://github.com/cubedro/eth-netstats
+    mkdir logs
     cd eth-netstats
     npm install
     sudo npm install -g grunt-cli
