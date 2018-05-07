@@ -1,7 +1,11 @@
-fabric8-analytics.log
 infrastructure/testnet/tls*
 infrastructure/testnet/network/*/
 infrastructure/testnet/logs/*
 infrastructure/testnet/nohup.out
 infrastructure/testnet/alastria-node
 infrastructure/testnet/eth-netstats
+
+.vagrant/
+build
+.DS_Store
+*.log
