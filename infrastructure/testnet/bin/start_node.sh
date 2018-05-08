@@ -109,6 +109,14 @@ else
 	nohup env PRIVATE_CONFIG="${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
+if ([ ! $# -ne 2 ] && [ "dockerfile" == "$2" ]); then 
+    
+    echo "Running your node ..."
+    while true; do
+        sleep 1000000
+    done;
+fi
+
 echo "Verify if ${PWD}/logs/ have new files."
 
 set +u
