@@ -55,3 +55,10 @@ install-test-complete:
 
 install-test-basic:
 	docker run --name $(NAME) -d alastria-node:$(VERSION) bash -c "./start.sh $(TYPE)"
+
+clean:
+	docker images -a | grep "alastria" | awk '{print $$3}' | xargs docker rmi -f
+
+stop:
+	docker ps -a | grep "alastria" | awk '{print $$1}' | xargs -I % sh -c 'docker stop %; docker rm %;'
+	
