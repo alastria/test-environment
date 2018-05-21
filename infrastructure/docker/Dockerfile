@@ -12,4 +12,6 @@ EXPOSE 21000-21010/udp
 EXPOSE 22000-22010/tcp
 
 COPY ./scripts/start.sh /opt/test-environment/infrastructure/testnet
+RUN chmod +x /opt/test-environment/infrastructure/testnet/start.sh
+
 WORKDIR /opt/test-environment/infrastructure/testnet
