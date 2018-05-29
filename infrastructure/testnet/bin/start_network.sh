@@ -52,17 +52,17 @@ start_gws () {
     GW_NUM=$1
     echo "[*] Starting gw nodes"
 
-    if [ "$VAL_NUM" -eq "1" ]; then
+    if [ "$GW_NUM" -eq "1" ]; then
         ./bin/start_node.sh general1
-    elif [ "$VAL_NUM" -eq "2" ]; then
+    elif [ "$GW_NUM" -eq "2" ]; then
         ./bin/start_node.sh general1
         ./bin/start_node.sh general2
 
-    elif [ "$VAL_NUM" -eq "3" ]; then
+    elif [ "$GW_NUM" -eq "3" ]; then
         ./bin/start_node.sh general1
         ./bin/start_node.sh general2
         ./bin/start_node.sh general3
-    elif [ "$VAL_NUM" -eq "4" ]; then
+    elif [ "$GW_NUM" -eq "4" ]; then
         ./bin/start_node.sh general1
         ./bin/start_node.sh general2
         ./bin/start_node.sh general3
