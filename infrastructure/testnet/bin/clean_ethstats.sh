@@ -3,7 +3,8 @@
 set -u
 set -e
 
-if [[ ! -d "./eth-netstats" ]]; then
+echo "[!!] Run this script from the directory test-environment/infrastructure/testnet/"
+if [[ -d "./eth-netstats" ]]; then
 	rm -rf ./eth-netstats
 fi
 
