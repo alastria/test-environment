@@ -2,8 +2,6 @@
 set -u
 set -e
 
-echo "Excecute from alastria folder"
-
 EPWD="$(pwd)"
 
 _TIME=$(date +%Y%m%d%H%M%S)
