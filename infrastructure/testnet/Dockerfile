@@ -33,6 +33,8 @@ WORKDIR /opt
 RUN ./bin/bootstrap.sh
 # Start ethstats
 RUN ./bin/start_ethstats.sh
+# Build geth for faulty_nodes
+RUN ./bin/build_faulty_nodes.sh
 
 # Monitoring
 EXPOSE 8443/tcp

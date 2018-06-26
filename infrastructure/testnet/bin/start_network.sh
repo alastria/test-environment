@@ -2,15 +2,17 @@
 set -u
 set -e
 
+FAULTY_MODE="1"
 
 echo "[!!] Run this script from the directory test-environment/infrastructure/testnet/"
-MESSAGE='Usage: start_network <mode>
+MESSAGE='Usage: start_network <mode> <number-validators-nodes> <number-gws-nodes> --faulty_node
     mode: clean | restart
     number-validators-nodes: <number:int> (0-3)
-    number-gws-nodes: <number:int> (0-4)'
+    number-gws-nodes: <number:int> (0-4)
+    --faulty_node'
 
 
-if ( [ $# -ne 3 ] ); then
+if ( [ $# -lt 3 ] ); then
     echo "$MESSAGE"
     exit
 fi
@@ -27,7 +29,11 @@ start_validators () {
     VAL_NUM=$1
     echo "[*] Starting validator nodes"
     if [ "$VAL_NUM" -eq "1" ]; then
-        ./bin/start_node.sh main
+        if ([ "--faulty_node" == "$2" ]); then
+            ./bin/start_faulty_node.sh main $FAULTY_MODE
+        else
+            ./bin/start_node.sh main
+        fi
     elif [ "$VAL_NUM" -eq "2" ]; then
         ./bin/start_node.sh main
         ./bin/start_node.sh validator1
@@ -73,7 +79,7 @@ start_gws () {
     fi
 }
 
-start_validators $2
+start_validators $2 $4
 start_gws $3
 
 

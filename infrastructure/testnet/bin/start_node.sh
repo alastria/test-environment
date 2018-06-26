@@ -4,6 +4,15 @@ set -e
 
 echo "[!!] Excecute from alastria test-environment/infrastructure/testnet/"
 
+MESSAGE='Usage: start_node <node_name>
+    node_name: general1-n | main/validator1-n'
+
+
+if ( [ $# -ne 1 ] ); then
+    echo "$MESSAGE"
+    exit
+fi
+
 PWD="$(pwd)"
 
 _TIME=$(date +%Y%m%d%H%M%S)
@@ -107,14 +116,6 @@ else
 	nohup constellation-node "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
 	check_port $CONSTELLATION_PORT
 	nohup env PRIVATE_CONFIG="${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
-fi
-
-if ([ ! $# -ne 2 ] && [ "dockerfile" == "$2" ]); then 
-    
-    echo "Running your node ..."
-    while true; do
-        sleep 1000000
-    done;
 fi
 
 echo "Verify if ${PWD}/logs/ have new files."
