@@ -31,28 +31,29 @@ elif ([ "restart" == "$1" ]); then
     echo "[*] Restarting previous configuration"
 fi
 
-start_main() {
+start_faulty_validator() {
     if ([ "--faulty_node" == "$FAULTY_FLAG" ]); then
         echo "[*] Starting faulty node"
-        ./bin/start_faulty_node.sh main $FAULTY_MODE
+        ./bin/start_faulty_node.sh validator1 $FAULTY_MODE
     else
-        ./bin/start_node.sh main
+        ./bin/start_node.sh validator1
     fi
 }
 
 start_validators () {
     VAL_NUM=$1
-    echo "[*] Starting validator nodes"q
+    echo "[*] Starting validator nodes"
     if [ "$VAL_NUM" -eq "1" ]; then
-        start_main
+        ./bin/start_node.sh main
     elif [ "$VAL_NUM" -eq "2" ]; then
         start_main
-        ./bin/start_node.sh validator1
+        ./bin/start_node.sh main
+        start_faulty_validator
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
-        start_main
-        ./bin/start_node.sh validator1
+        ./bin/start_node.sh main
+        start_faulty_validator
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
         ./bin/start_node.sh validator2
