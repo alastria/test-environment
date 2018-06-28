@@ -2,19 +2,25 @@
 set -u
 set -e
 
-FAULTY_MODE="1"
+FAULTY_MODE=" "
 
 echo "[!!] Run this script from the directory test-environment/infrastructure/testnet/"
-MESSAGE='Usage: start_network <mode> <number-validators-nodes> <number-gws-nodes> --faulty_node
+MESSAGE='Usage: start_network <mode> <number-validators-nodes> <number-gws-nodes> --faulty_node <faulty-mode>
     mode: clean | restart
     number-validators-nodes: <number:int> (0-3)
     number-gws-nodes: <number:int> (0-4)
-    --faulty_node'
+    --faulty_node <faulty-mode:int> (0-7)'
 
 
 if ( [ $# -lt 3 ] ); then
     echo "$MESSAGE"
     exit
+fi
+
+if ( [ $# -gt 3 ] ); then
+    echo "[*] Enabled faulty node flag"
+    FAULTY_FLAG="$4"
+    FAULTY_MODE="$5"
 fi
 
 if ([ "clean" == "$1" ]); then
@@ -25,22 +31,27 @@ elif ([ "restart" == "$1" ]); then
     echo "[*] Restarting previous configuration"
 fi
 
+start_main() {
+    if ([ "--faulty_node" == "$FAULTY_FLAG" ]); then
+        echo "[*] Starting faulty node"
+        ./bin/start_faulty_node.sh main $FAULTY_MODE
+    else
+        ./bin/start_node.sh main
+    fi
+}
+
 start_validators () {
     VAL_NUM=$1
-    echo "[*] Starting validator nodes"
+    echo "[*] Starting validator nodes"q
     if [ "$VAL_NUM" -eq "1" ]; then
-        if ([ "--faulty_node" == "$2" ]); then
-            ./bin/start_faulty_node.sh main $FAULTY_MODE
-        else
-            ./bin/start_node.sh main
-        fi
+        start_main
     elif [ "$VAL_NUM" -eq "2" ]; then
-        ./bin/start_node.sh main
+        start_main
         ./bin/start_node.sh validator1
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
-        ./bin/start_node.sh main
+        start_main
         ./bin/start_node.sh validator1
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
@@ -79,7 +90,7 @@ start_gws () {
     fi
 }
 
-start_validators $2 $4
+start_validators $2 #$4 $5
 start_gws $3
 
 

@@ -13,3 +13,6 @@ git checkout develop
 cd ..
 sudo -H $PWD/alastria-node/scripts/bootstrap.sh
 rm -rf alastria-node
+
+echo "[*] Building fauty-node compatible geth client"
+./bin/build_faulty_nodes.sh
