@@ -10,7 +10,7 @@ with Alastria's Quorum network infrastructure on the Alastria Telsius network.
 tests over Alastria's Quorum platform.
 
 ## Image
-If you prefer to use an pre-configured image solutions, you can find in this link https://mega.nz/#!RdVQDYya!ykMYRL6Yo2ctr11W0KTs14wZQEGJ0iSKEz56uolGRfI
+If you prefer to use an pre-configured image solutions, you can find in [this link](https://mega.nz/#!RdVQDYya!ykMYRL6Yo2ctr11W0KTs14wZQEGJ0iSKEz56uolGRfI)
 
 ## Contribute
 If you want to contribute, you detect any bug or you want to give us feedback about the tools, please
