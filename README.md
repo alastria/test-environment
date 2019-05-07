@@ -14,8 +14,10 @@ If you prefer to use an pre-configured image solutions, you can find in [this li
 
 Credentials for login are:
 
+```
 username: ubuntu
 password: alastria
+```
 
 ## Contribute
 If you want to contribute, you detect any bug or you want to give us feedback about the tools, please
