@@ -23,6 +23,12 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
+Si no tiene instalado Java:
+
+```bash
+sudo apt-get install default-jdk
+```
+
 Ahora, desde la carpeta `$HOME/alastria`, utilize eth-netstats como panel de control de la red utilizando:
 
 ```
