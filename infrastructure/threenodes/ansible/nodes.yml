@@ -1,0 +1,31 @@
+---
+
+# Validators
+  - name: Geth
+    command: |
+      nohup env geth --datadir "{{ project_path }}/{{ node_name }}" \
+        $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" \
+        2>> "{{ project_path }}/logs/quorum_{{ node_name }}_"{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}".log &
+
+# General
+  - name: Generate configuration
+    template:
+      src: config.jinja
+      dest: '{{ project_path }}/{{ node_name }}/constellation/constellation.conf'
+
+  - name: Constellation node
+    command: |
+      nohup constellation-node "{{ project_path }}/{{ node_name }}/constellation/constellation.conf" \
+        2>> "{{ project_path }}/logs/constellation_{{ node_name }}_{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}".log &
+
+  - name: Check port
+    command: netcat -z -v localhost {{ item }}
+    with_items: '{{ node_ports }}'
+
+  - name: Geth
+    command: |
+      nohup env geth --datadir "${PWD}/{{ node_name }}" \
+        --debug $GLOBAL_ARGS 2>> \
+        "${PWD}"/logs/quorum_"{{ node_name }}"_"{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}".log &
+    environment:
+      PRIVATE_CONFIG: "${PWD}"/"{{ node_name }}"/constellation/constellation.conf

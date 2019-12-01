@@ -1,0 +1,13 @@
+---
+
+- name: Download Cakeshop
+  get_url:
+    url: https://github.com/alastria/cakeshop/releases/download/v0.10.0-alastria/cakeshop.war
+    dest: '{{ project_path }}/../cakeshop'
+
+- name: Start Cakeshop
+  command: |
+    java -jar ~/alastria/cakeshop/cakeshop.war \
+      2>> ~/alastria/logs/cakeshop_"${_TIME}".log &
+  args:
+    chdir: '{{ project_path }}/../cakeshop'

@@ -1,0 +1,15 @@
+---
+
+- name: Clone and update alastria-node repo
+  git:
+    repo: '{{ alastria_node_repo }}'  # https://github.com/cubedro/eth-netstats
+    dest: '{{ project_path }}'
+    version: 'develop'  # master
+    force: yes
+    accept_hostkey: yes
+
+- name: Bootstrap Alastria Node
+  become: yes
+  command: ./bootstrap.sh
+  args:
+    chdir: '{{ project_path }}/alastria-node/scripts'
