@@ -2,9 +2,9 @@
 
 - name: Clone and update the eth_netstats repo
   git:
-    repo: '{{ eth_netstats_repo }}'  # https://github.com/cubedro/eth-netstats
+    repo: '{{ eth_netstats_repo }}'
     dest: '{{ project_path }}/eth-netstats'
-    version: '{{ project_repo_version }}'  # master
+    version: '{{ eth_netstats_version }}'
     force: yes
     accept_hostkey: yes
 
@@ -33,7 +33,7 @@
     chdir: '{{ project_path }}/eth-netstats'
 
 - name: Start
-  command: forever start server.js >> {{ project_path }}/logs/netstat_{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}.log &
+  command: forever start server.js >> {{ project_path }}/logs/netstat_{{ logdatetime }}.log &
   args:
     chdir: '{{ project_path }}/eth-netstats'
   environment:

@@ -2,6 +2,9 @@
 - hosts: all
   remote_user: ubuntu
 
+  vars:
+    - logdatetime: '{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}'
+
   tasks:
     - import_tasks: install.yml
     - import_tasks: bootstrap.yml

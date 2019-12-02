@@ -8,6 +8,6 @@
 - name: Start Cakeshop
   command: |
     java -jar ~/alastria/cakeshop/cakeshop.war \
-      2>> ~/alastria/logs/cakeshop_"${_TIME}".log &
+      2>> ~/alastria/logs/cakeshop_{{ logdatetime }}.log &
   args:
     chdir: '{{ project_path }}/../cakeshop'
