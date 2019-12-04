@@ -1,0 +1,13 @@
+---
+- hosts: all
+  remote_user: ubuntu
+
+  vars:
+    - logdatetime: '{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}'
+
+  tasks:
+    - import_tasks: install.yml
+    - import_tasks: bootstrap.yml
+    - import_tasks: eth_netstats.yml
+    - import_tasks: nodes.yml
+    - import_tasks: cakeshop.yml

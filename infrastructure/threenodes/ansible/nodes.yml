@@ -1,0 +1,34 @@
+---
+
+  - name: Geth
+    command: |
+      nohup env geth --datadir "{{ project_path }}/{{ item.name }}" \
+        "{{ global_args }}" --mine --minerthreads 1 --syncmode "full" \
+        2>> "{{ project_path }}/logs/quorum_{{ item.name }}_{{ logdatetime }}".log &
+    with_items: '{{ nodes }}'
+
+  - name: Generate configuration
+    template:
+      src: config.jinja
+      dest: '{{ project_path }}/{{ item.node }}/constellation/constellation.conf'
+    with_items: '{{ nodes }}'
+
+  - name: Constellation node
+    command: |
+      nohup constellation-node "{{ project_path }}/{{ item.name }}/constellation/constellation.conf" \
+        2>> "{{ project_path }}/logs/constellation_{{ item.name }}_{{ logdatetime }}".log &
+    with_items: '{{ nodes }}'
+
+  - name: Check port
+    command: netcat -z -v localhost {{ item.port }}
+    with_items: '{{ nodes }}'
+
+  - name: Geth
+    command: |
+      nohup env geth --datadir "{{ project_path }}/{{ item.name }}" \
+        --debug {{ global_args }} 2>> \
+        "{{ project_path }}/logs/quorum_{{ item.name }}_{{ logdatetime }}".log &
+    environment:
+      PRIVATE_CONFIG: "{{ project_path }}/{{ item.name }}/constellation/constellation.conf"
+    with_items:
+      - "{{ nodes }}"
