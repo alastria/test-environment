@@ -10,8 +10,8 @@
 
 - name: Create logs folder for ethstats
   file:
-    path: '{{ project_path }}/eth-netstats'
-    state: logs
+    path: '{{ project_path }}/eth-netstats/logs'
+    state: directory
     mode: '0755'
 
 - name: Install dependencies
@@ -19,13 +19,14 @@
     path: '{{ project_path }}/eth-netstats'
 
 - name: Install grunt
+  become: yes
   npm:
     name: '{{ item }}'
     global: yes
     state: present
   with_items:
     - grunt-cli
-    - forever
+    - pm2
 
 - name: Grunt
   command: grunt
@@ -33,7 +34,7 @@
     chdir: '{{ project_path }}/eth-netstats'
 
 - name: Start
-  command: forever start server.js >> {{ project_path }}/logs/netstat_{{ logdatetime }}.log &
+  command: pm2 start server.js >> {{ project_path }}/logs/netstat_{{ logdatetime }}.log &
   args:
     chdir: '{{ project_path }}/eth-netstats'
   environment:

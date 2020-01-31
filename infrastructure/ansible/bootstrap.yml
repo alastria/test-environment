@@ -1,0 +1,168 @@
+---
+
+- name: Clone and update alastria-node repo
+  git:
+    repo: '{{ alastria_node_repo }}'
+    dest: '{{ project_path }}'
+    version: '{{ alastria_node_version }}'
+    force: yes
+    accept_hostkey: yes
+
+- name: Install Ethereum
+  become: yes
+  apt_repository:
+    repo: 'ppa:ethereum/ethereum'
+
+- name: Install Ethereum DEV
+  become: yes
+  apt_repository:
+    repo: 'ppa:ethereum/ethereum-dev'
+
+- name: Install bootstrap dependencies
+  become: yes
+  apt:
+    update_cache: yes
+    pkg:
+    - software-properties-common
+    - unzip
+    - wget
+    - git
+    - make
+    - gcc
+    - libsodium-dev
+    - build-essential
+    - libdb-dev
+    - zlib1g-dev
+    - libtinfo-dev
+    - sysvbanner
+    - psmisc
+    - npm
+
+    # Ethereum
+    - solc
+
+- name: Clone and update WRK repo
+  git:
+    repo: 'https://github.com/wg/wrk.git'
+    dest: '{{ project_path }}/wrk'
+    version: 'master'
+    force: yes
+    accept_hostkey: yes
+
+- name: Make WRK
+  command: |
+    make
+  args:
+    chdir: '{{ project_path }}/wrk'
+
+- name: Clone and update LevelDB repo
+  git:
+    repo: 'https://github.com/google/leveldb.git'
+    dest: '{{ project_path }}/leveldb'
+    version: '0fa5a4f'
+    force: yes
+    accept_hostkey: yes
+
+- name: Make LevelDB
+  make:
+    chdir: '{{ project_path }}/leveldb'
+
+- name: Link to libraries
+  become: yes
+  command: ldconfig
+
+# Constellation
+- name: Get Constellation
+  get_url:
+    url: https://github.com/jpmorganchase/constellation/releases/download/v0.3.2/constellation-0.3.2-ubuntu1604.tar.xz
+    dest: '{{ project_path }}/constellation.tar.xz'
+
+- name: Create constellation directory
+  file:
+    path: '{{ project_path }}/constellation'
+    state: directory
+
+- name: Unarchive Constellation
+  unarchive:
+    src: '{{ project_path }}/constellation.tar.xz'
+    dest: '{{ project_path }}/constellation'
+    remote_src: yes
+
+# Quorum
+- name: Clone Quorum repo
+  git:
+    repo: 'https://github.com/alastria/quorum.git'
+    dest: '{{ project_path }}/quorum'
+    version: '94e1e31eb6a97e08dff4e44a8695dab1252ca3bc'
+    force: yes
+    accept_hostkey: yes
+
+# - name: Make Quorum
+#   make:
+#     chdir: '{{ project_path }}/quorum'
+#     target: all
+#   environment:
+#     GOROOT: /usr/local/go
+#     GOPATH: /home/ubuntu/alastria/workspace
+
+# Copy resources
+
+- name: Copy to Local Bin
+  become: yes
+  copy:
+    src: '{{ project_path }}/wrk/wrk'
+    dest: '/usr/local/bin'
+    mode: '0755'
+    remote_src: yes
+
+- name: Copy local files for leveldb
+  become: yes
+  copy:
+    src: '{{ item }}'
+    dest: '/usr/local/lib/'
+    remote_src: yes
+  with_items:
+    - '{{ project_path }}/leveldb/out-static/libleveldb.a'
+    - '{{ project_path }}/leveldb/out-static/libmemenv.a'
+
+- name: Copy shared files for leveldb
+  become: yes
+  copy:
+    src: '{{ item }}'
+    dest: '/usr/local/lib/'
+    remote_src: yes
+  with_items:
+    - '{{ project_path }}/leveldb/out-shared/libleveldb.so'
+    - '{{ project_path }}/leveldb/out-shared/libleveldb.so.1'
+    - '{{ project_path }}/leveldb/out-shared/libleveldb.so.1.20'
+
+- name: Copy leveldb
+  become: yes
+  copy:
+    src: '{{ project_path }}/leveldb/include/leveldb'
+    dest: '/usr/local/include/'
+    remote_src: yes
+
+- name: Copy Constellation
+  become: yes
+  copy:
+    src: '{{ project_path }}/constellation/constellation-0.3.2-ubuntu1604'
+    dest: '/usr/local/bin/'
+    mode: '0755'
+    remote_src: yes
+
+- name: Copy Geth
+  become: yes
+  copy:
+    src: '{{ project_path }}/quorum/build/bin/geth'
+    dest: '/usr/local/bin/'
+    mode: '0755'
+    remote_src: yes
+
+- name: Copy Bootnode
+  become: yes
+  copy:
+    src: '{{ project_path }}/quorum/build/bin/bootnode'
+    dest: '/usr/local/bin/'
+    mode: '0755'
+    remote_src: yes

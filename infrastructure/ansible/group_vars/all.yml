@@ -2,9 +2,10 @@
 
 project_path: '/home/{{ remote_user }}/alastria'
 
-eth_netstats_repo: https://github.com/cubedro/eth-netstats
+eth_netstats_repo: https://github.com/alastria/eth-netstats
 eth_netstats_version: master
 eth_netstats_secret: mysecret
+remote_user: ubuntu
 
 alastria_node_repo: https://github.com/alastria/alastria-node.git
 alastria_node_version: develop

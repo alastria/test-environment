@@ -10,3 +10,9 @@ infrastructure/testnet/geth_faulty
 build
 .DS_Store
 *.log
+*.retry
+
+# Terraform
+*.tfvars
+*.tfstate
+.terraform/
