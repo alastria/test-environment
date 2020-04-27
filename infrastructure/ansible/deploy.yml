@@ -1,12 +1,9 @@
 ---
+
 - hosts: test
   remote_user: ubuntu
   roles:
     - { name: fubarhouse.golang, become: yes }
-
-  # ENVIRONMENT:
-    # GOROOT: ""
-    # GOPATH: ""
 
   vars:
     - logdatetime: "{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"

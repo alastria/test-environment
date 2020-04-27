@@ -3,9 +3,17 @@
   - name: Geth
     command: |
       nohup env geth --datadir "{{ project_path }}/{{ item.name }}" \
-        "{{ global_args }}" --mine --minerthreads 1 --syncmode "full" \
+        --networkid {{ net_id }} --identity {{ item.identity }} --rpc \
+        --rpcaddr 0.0.0.0 \
+        --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul \
+        --rpcport {{ item.rpc_port }} --port {{ item.port }} \
+        --targetgaslimit 18446744073709551615 \
+        --ethstats {{ item.identity }}:bb98a0b6442386d0cdf8a31b267892c1@{{ item.ip }}:3000
+        --mine --minerthreads 1 --syncmode "full" \
         2>> "{{ project_path }}/logs/quorum_{{ item.name }}_{{ logdatetime }}".log &
     with_items: '{{ nodes }}'
+    tags:
+      - build
 
   - name: Generate configuration
     template:

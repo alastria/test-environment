@@ -97,16 +97,21 @@
     force: yes
     accept_hostkey: yes
 
-# - name: Make Quorum
-#   make:
-#     chdir: '{{ project_path }}/quorum'
-#     target: all
-#   environment:
-#     GOROOT: /usr/local/go
-#     GOPATH: /home/ubuntu/alastria/workspace
+- name: Replace line on Quorum Makefile
+  replace:
+    path: '{{ project_path }}/quorum/Makefile'
+    regexp: 'go run'
+    replace: '/usr/local/go/bin/go run'
+
+- name: Make Quorum
+  make:
+    chdir: '{{ project_path }}/quorum'
+    target: all
+  environment:
+    GOROOT: /usr/local/go
+    GOPATH: /home/ubuntu/alastria/workspace
 
 # Copy resources
-
 - name: Copy to Local Bin
   become: yes
   copy:

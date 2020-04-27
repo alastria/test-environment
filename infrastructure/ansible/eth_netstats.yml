@@ -33,8 +33,14 @@
   args:
     chdir: '{{ project_path }}/eth-netstats'
 
+- name: Create netstat logs
+  file:
+    path: "{{ project_path }}/logs/netstat_{{ logdatetime }}.log"
+    state: touch
+    mode: u=rw,g=r,o=r
+
 - name: Start
-  command: pm2 start server.js >> {{ project_path }}/logs/netstat_{{ logdatetime }}.log &
+  command: pm2 start -f server.js -l {{ project_path }}/logs/netstat_{{ logdatetime }}.log
   args:
     chdir: '{{ project_path }}/eth-netstats'
   environment:
