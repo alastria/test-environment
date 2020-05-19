@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity >=0.4.8;
 
 contract ArraysAndStructs {
 
@@ -11,17 +11,17 @@ contract ArraysAndStructs {
     
     event NewElement(address owner, bytes32 name);
 
-    function ArraysAndStructs() public payable { }
+    constructor()  public payable { }
 
     function addElemements (bytes32 name) public {
         list.owners.push(msg.sender);
         list.names.push(name);
 
         // Trigger event
-        NewElement(msg.sender, name);
+        emit NewElement(msg.sender, name);
     }
 
-function getElements() external view returns (address[],bytes32[]) {
+function getElements() external view returns (address[] memory, bytes32[] memory) {
         return (list.owners, list.names);
     }
 }

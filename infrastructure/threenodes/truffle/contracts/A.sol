@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity >=0.4.8;
 
 import "contracts/B.sol";
 
@@ -10,21 +10,21 @@ contract A {
 
     event NewAddress(address a);
 
-    function A() public payable { }
+    constructor() public payable { }
 
     function create(bytes32 caracter) public returns (address a) {
         B obj = new B();
-        addElements.push(obj);
+        addElements.push(address(obj));
         caracteres.push(caracter);
 
         // Trigger event
-        NewAddress(obj);
+        emit NewAddress(address(obj));
 
-        a = obj;
-        return;
+        a = address(obj);
+        return a;
     }
 
-    function getElements() external view returns (address[]) {
+    function getElements() external view returns (address[] memory) {
         return addElements;
     }
 }

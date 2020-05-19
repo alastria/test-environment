@@ -1,9 +1,9 @@
-pragma solidity ^0.4.8;
+pragma solidity >=0.4.8;
 
 
 contract B {
 
-    function B() public {
+    constructor() public {
 
     }
 
