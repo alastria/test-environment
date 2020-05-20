@@ -46,7 +46,6 @@ start_validators () {
     if [ "$VAL_NUM" -eq "1" ]; then
         ./bin/start_node.sh main
     elif [ "$VAL_NUM" -eq "2" ]; then
-        start_main
         ./bin/start_node.sh main
         start_faulty_validator
         sleep 15

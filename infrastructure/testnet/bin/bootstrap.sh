@@ -2,11 +2,11 @@
 echo "[*] Installing required dependencies"
 PWD="${pwd}"
 
-sudo apt-get install wget git sudo netcat npm nodejs
+sudo apt-get install wget git sudo netcat npm nodejs golang
 # When using docker images
 # sudo apt-get install wget git sudo netcat
 
-git clone https://github.com/alastria/alastria-node.git  
+git clone https://github.com/alastria/alastria-node.git
 cd alastria-node/
 git checkout develop
 
