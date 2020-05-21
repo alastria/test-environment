@@ -37,6 +37,8 @@
     - sysvbanner
     - psmisc
     - npm
+    - netcat
+    - netcat-traditional
 
     # Ethereum
     - solc
