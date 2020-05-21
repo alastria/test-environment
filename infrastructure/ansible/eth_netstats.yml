@@ -33,6 +33,12 @@
   args:
     chdir: '{{ project_path }}/eth-netstats'
 
+- name: Create Logs directory
+  file:
+    path: '{{ project_path }}/logs'
+    state: directory
+    mode: '0755'
+
 - name: Create netstat logs
   file:
     path: "{{ project_path }}/logs/netstat_{{ logdatetime }}.log"
