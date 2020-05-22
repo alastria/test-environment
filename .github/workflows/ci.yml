@@ -4,12 +4,13 @@ on: [push]
 
 jobs:
   backend:
-    name: Build on ${{ matrix.container }}
+    name: Build on ${{ matrix.os }}
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: [ 'williamyeh/ansible:ubuntu16.04', 'williamyeh/ansible:ubuntu16.04' , 'javaguirre/ansible:ubuntu20.04']
+        container: [ 'williamyeh/ansible:ubuntu16.04', 'williamyeh/ansible:ubuntu18.04' , 'javaguirre/ansible:ubuntu20.04']
+        os: [ 'Ubuntu 16.04', 'Ubuntu 18.04' , 'Ubuntu 20.04']
 
     steps:
     - uses: actions/checkout@v1
