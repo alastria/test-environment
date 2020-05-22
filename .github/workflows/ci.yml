@@ -17,6 +17,12 @@ jobs:
     - name: APT update
       run: apt update
 
+    - name: APT install software-common
+      run: apt install software-properties-common
+
+    - name: Apt add PPA Ansible
+      run: apt-add-repository --yes --update ppa:ansible/ansible
+
     - name: Install Ansible
       run: apt -y install ansible
 
