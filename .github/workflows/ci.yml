@@ -14,8 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: APT update
+      run: apt update
+
     - name: Install Ansible
-      run: apt-get install ansible
+      run: apt -y install ansible
 
     - name: Install Ansible Galaxy
       run: ansible-galaxy install fubarhouse.golang
