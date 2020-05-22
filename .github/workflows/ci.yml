@@ -1,0 +1,24 @@
+name: CI
+
+on: [push]
+
+jobs:
+  backend:
+    name: Build on ${{ matrix.container }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: [ 'ubuntu:16.04', 'ubuntu:18.04', 'ubuntu:20.04' ]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Ansible
+      run: sudo apt-get install ansible
+
+    - name: Install Ansible Galaxy
+      run: ansible-galaxy install fubarhouse.golang
+
+    - name: Run Ansible test
+      run: ansible-playbook -i test.yml
