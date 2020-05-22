@@ -17,9 +17,9 @@
     #   tags:
     #     - bootstrap
 
-    # - import_tasks: eth_netstats.yml
-    #   tags:
-    #     - netstats
+    - import_tasks: eth_netstats.yml
+      tags:
+        - netstats
 
     # TODO Left out for now
     # - import_tasks: nodes.yml
