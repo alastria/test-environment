@@ -9,22 +9,10 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: [ 'ubuntu:16.04', 'ubuntu:18.04', 'ubuntu:20.04' ]
+        container: [ 'williamyeh/ansible:ubuntu16.04', 'williamyeh/ansible:ubuntu16.04' ]
 
     steps:
     - uses: actions/checkout@v1
-
-    - name: APT update
-      run: apt update
-
-    - name: APT install software-common
-      run: apt install --yes software-properties-common
-
-    - name: Apt add PPA Ansible
-      run: apt-add-repository --yes --update ppa:ansible/ansible
-
-    - name: Install Ansible
-      run: apt install --yes ansible
 
     - name: Install Ansible Galaxy
       run: ansible-galaxy install fubarhouse.golang
