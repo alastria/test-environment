@@ -9,7 +9,7 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: [ 'williamyeh/ansible:ubuntu16.04', 'williamyeh/ansible:ubuntu16.04' ]
+        container: [ 'williamyeh/ansible:ubuntu16.04', 'williamyeh/ansible:ubuntu16.04' , 'javaguirre/ansible:ubuntu20.04']
 
     steps:
     - uses: actions/checkout@v1
