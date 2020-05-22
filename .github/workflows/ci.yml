@@ -18,13 +18,13 @@ jobs:
       run: apt update
 
     - name: APT install software-common
-      run: apt install software-properties-common
+      run: apt install --yes software-properties-common
 
     - name: Apt add PPA Ansible
       run: apt-add-repository --yes --update ppa:ansible/ansible
 
     - name: Install Ansible
-      run: apt -y install ansible
+      run: apt install --yes ansible
 
     - name: Install Ansible Galaxy
       run: ansible-galaxy install fubarhouse.golang
