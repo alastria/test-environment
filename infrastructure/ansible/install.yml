@@ -17,10 +17,3 @@
     path: '~/.bashrc'
     regexp: '^PATH='
     line: 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH'
-
-- name: Install dependencies
-  become: yes
-  apt:
-    update_cache: yes
-    pkg:
-    - nodejs

@@ -27,6 +27,7 @@
   with_items:
     - grunt-cli
     - pm2
+    - nodejs
 
 - name: Grunt
   command: grunt
