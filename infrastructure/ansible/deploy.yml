@@ -22,6 +22,10 @@
       tags:
         - netstats
 
+    - import_tasks: etherbase.yml
+      tags:
+        - etherbase
+
     - import_tasks: nodes.yml
       tags:
         - nodes

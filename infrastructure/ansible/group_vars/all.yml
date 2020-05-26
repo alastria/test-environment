@@ -9,6 +9,8 @@ remote_user: ubuntu
 
 alastria_node_repo: https://github.com/alastria/alastria-node.git
 alastria_node_version: develop
+etherbase_account: account_hash  # TO BE SET
+etherbase_account_pass: account_pass  # TO BE SET
 
 nodes:
   - { name: validator, port: 9000, rpc_port: 21000, identity: validator, ip: 127.0.0.1 }
