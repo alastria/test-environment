@@ -1,5 +1,8 @@
 ---
 
+- name: Ensure bashrc exists
+  file: path='~/.bashrc' state=touch
+
 - name: Ensure GOROOT set
   lineinfile:
     path: '~/.bashrc'
