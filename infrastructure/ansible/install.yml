@@ -1,7 +1,11 @@
 ---
 
 - name: Ensure bashrc exists
-  file: path='~/.bashrc' state=touch
+  file:
+    path: '~/.bashrc'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
 
 - name: Ensure GOROOT set
   lineinfile:
