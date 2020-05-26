@@ -1,23 +1,5 @@
 ---
 
-- name: Clone and update alastria-node repo
-  git:
-    repo: '{{ alastria_node_repo }}'
-    dest: '{{ project_path }}'
-    version: '{{ alastria_node_version }}'
-    force: yes
-    accept_hostkey: yes
-
-- name: Install Ethereum
-  become: yes
-  apt_repository:
-    repo: 'ppa:ethereum/ethereum'
-
-- name: Install Ethereum DEV
-  become: yes
-  apt_repository:
-    repo: 'ppa:ethereum/ethereum-dev'
-
 - name: Install bootstrap dependencies
   become: yes
   apt:
@@ -39,9 +21,28 @@
     - npm
     - netcat
     - netcat-traditional
+    - gnupg2
 
     # Ethereum
     - solc
+
+- name: Clone and update alastria-node repo
+  git:
+    repo: '{{ alastria_node_repo }}'
+    dest: '{{ project_path }}'
+    version: '{{ alastria_node_version }}'
+    force: yes
+    accept_hostkey: yes
+
+- name: Install Ethereum
+  become: yes
+  apt_repository:
+    repo: 'ppa:ethereum/ethereum'
+
+- name: Install Ethereum DEV
+  become: yes
+  apt_repository:
+    repo: 'ppa:ethereum/ethereum-dev'
 
 - name: Clone and update WRK repo
   git:
