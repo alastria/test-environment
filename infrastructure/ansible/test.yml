@@ -1,0 +1,35 @@
+---
+
+- hosts: localhost
+  connection: local
+  roles:
+    - { name: fubarhouse.golang, become: yes }
+
+  vars_files:
+    - defaults/test.yml
+
+  tasks:
+    # - import_tasks: install.yml
+    #   tags:
+    #     - install
+
+    # - import_tasks: bootstrap.yml
+    #   tags:
+    #     - bootstrap
+
+    # - import_tasks: eth_netstats.yml
+    #   tags:
+    #     - netstats
+
+    # - import_tasks: etherbase.yml
+    #   tags:
+    #     - etherbase
+
+    # TODO Left out for now
+    # - import_tasks: nodes.yml
+    #   tags:
+    #     - nodes
+
+    - import_tasks: cakeshop.yml
+      tags:
+        - cakeshop

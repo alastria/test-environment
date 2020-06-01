@@ -1,0 +1,24 @@
+name: CI
+
+on: [push]
+
+jobs:
+  backend:
+    name: Build on ${{ matrix.container.name }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container.image }}
+    strategy:
+      matrix:
+        container:
+          - { image: 'williamyeh/ansible:ubuntu16.04', name: 'Ubuntu 16.04' }
+          - { image: 'williamyeh/ansible:ubuntu18.04', name: 'Ubuntu 18.04' }
+          - { image: 'javaguirre/ansible:ubuntu20.04', name: 'Ubuntu 20.04' }
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Ansible Galaxy
+      run: ansible-galaxy install fubarhouse.golang
+
+    - name: Run Ansible test
+      run: cd infrastructure/ansible && ansible-playbook test.yml

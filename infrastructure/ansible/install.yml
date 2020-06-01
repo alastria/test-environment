@@ -1,0 +1,26 @@
+---
+
+- name: Ensure bashrc exists
+  file:
+    path: '~/.bashrc'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Ensure GOROOT set
+  lineinfile:
+    path: '~/.bashrc'
+    regexp: '^GOROOT='
+    line: 'export GOROOT=/usr/local/go'
+
+- name: Ensure GOPATH set
+  lineinfile:
+    path: '~/.bashrc'
+    regexp: '^GOPATH='
+    line: 'export GOPATH={{ project_path }}/workspace'
+
+- name: Ensure PATH set
+  lineinfile:
+    path: '~/.bashrc'
+    regexp: '^PATH='
+    line: 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH'

@@ -1,0 +1,35 @@
+---
+
+- hosts: test
+  remote_user: ubuntu
+  roles:
+    - { name: fubarhouse.golang, become: yes }
+
+  vars:
+    - logdatetime: "{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    - go_version: 1.9.5
+
+  tasks:
+    - import_tasks: install.yml
+      tags:
+        - install
+
+    - import_tasks: bootstrap.yml
+      tags:
+        - bootstrap
+
+    - import_tasks: eth_netstats.yml
+      tags:
+        - netstats
+
+    - import_tasks: etherbase.yml
+      tags:
+        - etherbase
+
+    - import_tasks: nodes.yml
+      tags:
+        - nodes
+
+    - import_tasks: cakeshop.yml
+      tags:
+        - cakeshop
