@@ -8,7 +8,7 @@ sudo apt-get install wget git sudo netcat npm nodejs golang
 
 git clone https://github.com/alastria/alastria-node.git
 cd alastria-node/
-git checkout develop
+git checkout testnet2
 
 cd ..
 sudo -H $PWD/alastria-node/scripts/bootstrap.sh
