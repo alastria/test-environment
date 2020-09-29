@@ -8,7 +8,7 @@ eth_netstats_secret: mysecret
 remote_user: ubuntu
 
 alastria_node_repo: https://github.com/alastria/alastria-node.git
-alastria_node_version: develop
+alastria_node_version: testnet2
 etherbase_account: account_hash  # TO BE SET
 etherbase_account_pass: account_pass  # TO BE SET
 
