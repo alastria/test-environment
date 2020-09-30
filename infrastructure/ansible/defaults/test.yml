@@ -10,7 +10,7 @@ eth_netstats_secret: mysecret
 remote_user: ubuntu
 
 alastria_node_repo: https://github.com/alastria/alastria-node.git
-alastria_node_version: develop
+alastria_node_version: testnet2
 
 nodes:
   - { name: validator, port: 9000, rpc_port: 21000, identity: validator, ip: 127.0.0.1 }
