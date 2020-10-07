@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "[*] Installing required dependencies"
-PWD="${pwd}"
+PWD="$(pwd)"
 
 sudo apt-get install wget git sudo netcat npm nodejs golang
 # When using docker images
@@ -13,7 +13,8 @@ sudo apt-get install wget git sudo netcat npm nodejs golang
 # cd ..
 # sudo -H $PWD/alastria-node/scripts/bootstrap.sh
 
-sudo ./bootstrap-alastria-node.sh
+# echo "$PWD"
+sudo bash -H bootstrap-alastria-node.sh
 # rm -rf alastria-node
 
 echo "[*] Building fauty-node compatible geth client"
