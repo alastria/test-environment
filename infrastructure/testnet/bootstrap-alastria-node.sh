@@ -73,25 +73,32 @@ function installconstellation {
     superuser chmod 0755 /usr/local/bin/constellation-node
     superuser rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
     popd
-    fixconstellation
   fi
+    fixconstellation
 }
 
 function fixconstellation {
+  echo "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
   #It turns out that centos ships libsodium-23 which does not provide a link for libsodium 18
   sodiumrel=$(ldd /usr/local/bin/constellation-node 2>/dev/null | grep libsodium | sed 's/libsodium.so.18 => //' | tr -d '[:space:]')
   if [ $sodiumrel = "notfound" ]
   then
-    if [ -f /lib64/libsodium.so ]
+    installed=$(whereis libsodium 2>/dev/null | grep libsodium.so |  cut -d ' ' -f2 | sed 's/libsodium.so => //' | tr -d '[:space:]')
+    if [[ -f $installed ]]
     then
+      echo "${installed}"
       echo "The libsodium package version in the distribution mismatches the one linked in constellation. Symlinking"
-      superuser ln -s /lib64/libsodium.so /lib64/libsodium.so.18
+      superuser ln -s $installed /lib64/libsodium.so.18
+      superuser cp $installed /usr/lib/x86_64-linux-gnu/libsodium.so.18 #TODO
+      superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so /usr/lib/x86_64-linux-gnu/libleveldb.so.1 #TODO
+      
       superuser ldconfig
     else
       echo "libsodium requirement in constellation was not satisfied, and a libsodium library was not found to make-do."
       exit
     fi
-  fi 
+  fi
+  echo "FINISH"
 }
 
 function installquorum {
@@ -121,12 +128,12 @@ function debrequired {
 function gopath {
 # Manage GOROOT variable
   if [[ -z "$GOROOT" ]]; then
-    echo "[*] Trying default $GOROOT. If the script fails please run $HOME/alastria-node/bootstrap.sh or configure GOROOT correctly"
-    echo 'export GOROOT=/usr/local/go' >> $HOME/.bashrc
-    echo 'export GOPATH=$HOME/alastria/workspace' >> $HOME/.bashrc
-    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> $HOME/.bashrc
-    export GOROOT=/usr/local/go
-    export GOPATH=$HOME/alastria/workspace
+    echo "[*] Trying default $GOROOT. If the script fails please run $(pwd)/alastria-node/bootstrap.sh or configure GOROOT correctly"
+    echo 'export GOROOT=/usr/lib/go' >> $(pwd)/.bashrc
+    echo 'export GOPATH=$HOME/alastria/workspace' >> $(pwd)/.bashrc
+    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> $(pwd)/.bashrc
+    export GOROOT=/usr/lib/go
+    export GOPATH=$(pwd)/alastria/workspace
     export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
     echo "[*] GOROOT = $GOROOT, GOPATH = $GOPATH"
@@ -146,6 +153,8 @@ function uninstallalastria {
 }
 
 function installalastria {
+  # echo "$HOME"
+  # echo "$(pwd)"
   set -e
   OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's\"\\g')
   if [ $OS = "centos" ] || [ $OS = "rhel" ]
@@ -158,9 +167,13 @@ function installalastria {
     exit
   fi
   
+  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallgo"
   installgo
+  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallconstellation"
   installconstellation
+  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallquorum"
   installquorum
+  echo "MMMMMMMMMMMMMMMMMMMMMMMMgopath"
   gopath
   
   set +e
