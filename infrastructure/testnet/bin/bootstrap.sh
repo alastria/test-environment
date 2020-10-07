@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "[*] Installing required dependencies"
-PWD="${pwd}"
+PWD="$(pwd)"
 
 sudo apt-get install wget git sudo netcat npm nodejs golang
 # When using docker images
