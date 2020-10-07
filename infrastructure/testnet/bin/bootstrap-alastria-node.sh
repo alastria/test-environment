@@ -78,20 +78,17 @@ function installconstellation {
 }
 
 function fixconstellation {
-  echo "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
-  #It turns out that centos ships libsodium-23 which does not provide a link for libsodium 18
+  #CentOS and Ubuntu 20 do not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation
   sodiumrel=$(ldd /usr/local/bin/constellation-node 2>/dev/null | grep libsodium | sed 's/libsodium.so.18 => //' | tr -d '[:space:]')
   if [ $sodiumrel = "notfound" ]
   then
-    installed=$(whereis libsodium 2>/dev/null | grep libsodium.so |  cut -d ' ' -f2 | sed 's/libsodium.so => //' | tr -d '[:space:]')
-    if [[ -f $installed ]]
+    installedpath=$(whereis libsodium 2>/dev/null | grep libsodium.so |  cut -d ' ' -f2 | sed 's/libsodium.so//' | tr -d '[:space:]')
+    if [[ -d $installedpath ]]
     then
-      echo "${installed}"
       echo "The libsodium package version in the distribution mismatches the one linked in constellation. Symlinking"
-      superuser ln -s $installed /lib64/libsodium.so.18
-      superuser cp $installed /usr/lib/x86_64-linux-gnu/libsodium.so.18 #TODO
-      superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so /usr/lib/x86_64-linux-gnu/libleveldb.so.1 #TODO
-      
+      superuser ln -s $installedpath/libsodium.so /lib64/libsodium.so.18
+      superuser cp $installedpath/libsodium.so $installedpath/libsodium.so.18
+      superuser cp $installedpath/libleveldb.so $installedpath/libleveldb.so.1 
       superuser ldconfig
     else
       echo "libsodium requirement in constellation was not satisfied, and a libsodium library was not found to make-do."
@@ -118,11 +115,12 @@ function installquorum {
 }
 
 function debrequired {
-  superuser apt-get update && superuser apt-get upgrade -y
-  superuser apt-get install -y software-properties-common unzip wget git\
-       make gcc libsodium-dev build-essential libdb-dev zlib1g-dev \
-       libtinfo-dev sysvbanner psmisc libleveldb-dev\
-       libsodium-dev libdb5.3-dev dnsutils
+  echo "Skipping installation during development"
+  # superuser apt-get update && superuser apt-get upgrade -y
+  # superuser apt-get install -y software-properties-common unzip wget git\
+  #      make gcc libsodium-dev build-essential libdb-dev zlib1g-dev \
+  #      libtinfo-dev sysvbanner psmisc libleveldb-dev\
+  #      libsodium-dev libdb5.3-dev dnsutils
 }
 
 function gopath {
@@ -167,13 +165,9 @@ function installalastria {
     exit
   fi
   
-  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallgo"
   installgo
-  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallconstellation"
   installconstellation
-  echo "MMMMMMMMMMMMMMMMMMMMMMMMinstallquorum"
   installquorum
-  echo "MMMMMMMMMMMMMMMMMMMMMMMMgopath"
   gopath
   
   set +e
