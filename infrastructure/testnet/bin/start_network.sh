@@ -10,6 +10,8 @@ MESSAGE='Usage: start_network <mode> <number-validators-nodes> <number-gws-nodes
     number-validators-nodes: <number:int> (0-3)
     number-gws-nodes: <number:int> (0-4)
     --faulty_node <faulty-mode:int> (0-7)'
+    FAULTY_FLAG=""
+    FAULTY_MODE=""
 
 
 if ( [ $# -lt 3 ] ); then

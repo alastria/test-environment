@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 function superuser {
   if ( type "sudo"  > /dev/null 2>&1 )
   then
@@ -15,7 +14,7 @@ function installgo {
   if ( ! type "go" > /dev/null 2>&1 )
   then
     PATH="$PATH:/usr/local/go/bin"
-    echo "Installing GO"    
+    echo "Installing GO"
     wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
     pushd /tmp
     tar xvzf $GOREL
@@ -49,11 +48,11 @@ function rhrequired {
     superuser yum -y install wget
     wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O /tmp/epel-release-latest-7.noarch.rpm
     superuser yum -y install /tmp/epel-release-latest-7.noarch.rpm
-  else 
+  else
     echo "EPEL repository is available in YUM via distro packages. Adding it as a source for packages"
     superuser yum -y install epel-release
   fi
-  
+
   superuser yum -y update
   echo "Installing Libraries"
   superuser yum -y install gmp-devel gcc gcc-c++ make openssl-devel libdb-devel\
@@ -69,7 +68,7 @@ function installconstellation {
     pushd /tmp
     unxz $constellationrel.tar.xz
     tar -xf $constellationrel.tar
-    superuser cp $constellationrel/constellation-node /usr/local/bin 
+    superuser cp $constellationrel/constellation-node /usr/local/bin
     superuser chmod 0755 /usr/local/bin/constellation-node
     superuser rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
     popd
@@ -88,7 +87,7 @@ function fixconstellation {
       echo "The libsodium package version in the distribution mismatches the one linked in constellation. Symlinking"
       superuser ln -s $installedpath/libsodium.so /lib64/libsodium.so.18
       superuser cp $installedpath/libsodium.so $installedpath/libsodium.so.18
-      superuser cp $installedpath/libleveldb.so $installedpath/libleveldb.so.1 
+      superuser cp $installedpath/libleveldb.so $installedpath/libleveldb.so.1
       superuser ldconfig
     else
       echo "libsodium requirement in constellation was not satisfied, and a libsodium library was not found to make-do."
@@ -102,15 +101,19 @@ function installquorum {
   if ( ! type "geth" > /dev/null 2>&1 )
   then
     echo "Installing QUORUM"
+    # superuser mkdir /tmp/quorum_old
+    # pushd /tmp/quorum_old
     pushd /tmp
-    git clone https://github.com/alastria/quorum.git
+    # git clone https://github.com/alastria/quorum.git
+    git clone https://github.com/ConsenSys/quorum.git
     cd quorum
-    git checkout 775aa2f5a6a52d9d84c85d5ed73521a1ea5b15b3
+    # git checkout 775aa2f5a6a52d9d84c85d5ed73521a1ea5b15b3
+    git checkout 9339be03f9119ee488b05cf087d103da7e68f053 #2.6.0
     make all
     superuser cp build/bin/geth /usr/local/bin
     superuser cp build/bin/bootnode /usr/local/bin
     popd
-    rm -rf /tmp/quorum
+    # rm -rf /tmp/quorum
   fi
 }
 
@@ -139,7 +142,7 @@ function gopath {
     mkdir -p "$GOPATH"/{bin,src}
   fi
 
-  exec "$BASH"
+  # exec "$BASH"
 
 }
 
