@@ -81,7 +81,7 @@ function fixconstellation {
   sodiumrel=$(ldd /usr/local/bin/constellation-node 2>/dev/null | grep libsodium | sed 's/libsodium.so.18 => //' | tr -d '[:space:]')
   if [ $sodiumrel = "notfound" ]
   then
-    installedpath=$(whereis libsodium 2>/dev/null | grep libsodium.so |  cut -d ' ' -f2 | sed 's/libsodium.so//' | tr -d '[:space:]')
+    installedpath=$(whereis libsodium.so.* 2>/dev/null | sed 's/ /\n/g' | grep libsodium.so$ | sed 's/libsodium.so//' | tr -d '[:space:]')
     if [[ -d $installedpath ]]
     then
       echo "The libsodium package version in the distribution mismatches the one linked in constellation. Symlinking"

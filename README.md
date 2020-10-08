@@ -4,6 +4,8 @@ This is the branch where the testnet implementation will be upgraded, tested and
 
 # CHANGELOG
 
+Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be ported to Ubuntu 18.04 LTS.
+
 - **infrastructure/testnet/bin/bootstrap.sh**
 
   - Added call to the bootstrap.sh of the repository of alastria-node, copied into `infrastructure/testnet/bin`
@@ -33,6 +35,12 @@ This is the branch where the testnet implementation will be upgraded, tested and
         else
     ```
 
+  - Changed Quorum version to Consensys 2.6 instead of Alastria 2.2 (this is an upcoming change to Alastria-node environment.
+
+- **infrastructure/testnet/bin/start-node.sh**
+
+  - Added the `env PRIVATE_CONFIG=ignore` modifier in the node initialization. This is due to the Quorum update and a temporary change just to have the script working properly.
+
 - **TBD**:
 
   - Have a look at some potential problems of `set -e` command and maybe change all its occurrences:
@@ -43,4 +51,29 @@ This is the branch where the testnet implementation will be upgraded, tested and
   - **IMPORTANT**: Consider to lock package versions so there are no issues with that in the future. In the case of a container like docker or a Vagrant installation, the packages should already be installed. This can potentially break the scripts and lead to security and/or performance issues.
 
 - **Other changes and notes**:
-  - In Ubuntu 20 it has been mandatory to install libtinfo5 because it's the version used by Constellation-
+
+  - In Ubuntu 20 it has been mandatory to install libtinfo5 because it's the version used by Constellation
+  - CBX Quorum explorer: (https://github.com/Councilbox/cbx-quorum-explorer/)[GitHub]
+
+  File env.sh:
+
+  ```
+  QUORUM_ENDPOINTS=http://localhost:22000,localhos:22001,etc #It is irrelevant to add the http or not. BEWARE OF SPACES
+  ENABLE_SSL=false #In lower case
+  EXPLORER_PORT=8888
+  API_DOMAIN=localhost
+  MONGO_DATA_DIR=/home/vagrant/projects/cbx-quorum-explorer/mongo_data_dir #This file has to be created beforehand. It will be external to Docker.
+  API_PORT=8886 #It MUST remain empty for local usage
+  EXTERNAL_API_PORT=8885 #It MUST remain empty for local usage
+  WEBAPP_VERSION=cbx
+  ```
+
+  The `docker-compose.yaml.template` file must be replaced with this one: https://gist.github.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905
+
+  The Docker container inside each folder must be built before executing `launch.sh` script:
+
+  `$cd http_api`
+
+  `$sudo ./build.sh`
+
+  It is mandatory to execute `launch.sh` with sudo.
