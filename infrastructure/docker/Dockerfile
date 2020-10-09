@@ -1,5 +1,5 @@
 FROM alastria-base
-LABEL maintainer="Javi <nhitbh@gmail.com>"
+LABEL maintainer="Carlos Morales  <cmoralesdiego@deloitte.es>"
 
 # Monitoring
 EXPOSE 8443/tcp
@@ -10,6 +10,8 @@ EXPOSE 21000-21010/tcp
 EXPOSE 21000-21010/udp
 # RPC
 EXPOSE 22000-22010/tcp
+# ETHSTATS
+EXPOSE 3000
 
 COPY ./scripts/start.sh /opt/test-environment/infrastructure/testnet
 RUN chmod +x /opt/test-environment/infrastructure/testnet/start.sh
