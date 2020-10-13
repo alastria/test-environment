@@ -4,6 +4,8 @@ The purpose of this branch is to implement the last package updates so the test 
 
 This is the "main" branch for the task. The test environment consists of 5 separated implementations: ansible, docker, testnet, threenodes and performance. Each one of them will be dealt in a separated branch and then merged to this one.
 
+A decision has been made about scripts: considering that the system is installed from scratch, at least in the vagrant and docker scripts, there makes no sense to use variables to pass the paths and execute scripts, like $HOME, $(pwd), "if type go", etc, because we should know exactly where those executables and paths are. So to make the installation less prone to errors, from this commit on the paths will be hardcoded.
+
 # Test Environment Installation:
 
 - **VAGRANT (preferred)**
@@ -60,6 +62,8 @@ This is the "main" branch for the task. The test environment consists of 5 separ
   - Check localhost:22000 to see the block explorer running.
 
   - You can execute `sudo bash bin/start_ethstats.sh` to see ethstats. Open localhost:3000 in a browser.
+
+  - You can send transactions through geth or truffle. Just use a terminal to execute either of them. Alternatively, you can now clone the alastria-lib-example and alastria-lib repositories.
 
   <!-- - Geth 1.9.5. Recommended procedure: -- IS INSTALLED ALONG QUORUM
     ```

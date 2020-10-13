@@ -9,6 +9,7 @@ fi
 
 git clone https://github.com/alastria/geth_faulty_nodes
 
+PATH="$PATH:/usr/local/go/bin"
 cd geth_faulty_nodes
 make geth
 echo "[*] Moving built geth"
