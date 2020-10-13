@@ -56,6 +56,9 @@ install-test-complete:
 install-test-basic:
 	docker run --name $(NAME) -d alastria-node:$(VERSION) bash -c "./start.sh $(TYPE)"
 
+complete:
+	docker run -p $(CONSTELLATION_PORT) -p $(GETH_PORT_TCP) -p $(GETH_PORT_UDP) -p $(RPC_PORT) \
+        -it -d alastria-node:$(VERSION) bash -c "/opt/test-environment/infrastructure/testnet/bin/start_network.sh clean 2 3 && /opt/test-environment/infrastructure/testnet/bin/start_ethstats"
 clean:
 	docker images -a | grep "alastria" | awk '{print $$3}' | xargs docker rmi -f
 

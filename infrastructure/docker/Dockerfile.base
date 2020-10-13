@@ -1,5 +1,5 @@
-FROM ubuntu:16.04
-LABEL maintainer="Javi <nhitbh@gmail.com>"
+FROM ubuntu:18.04
+LABEL maintainer="Carlos Morales <cmoralesdiego@deloitte.es>"
 
 ENV http_proxy ${http_proxy}
 ENV https_proxy ${http_proxy}
@@ -7,25 +7,27 @@ ENV https_proxy ${http_proxy}
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
     make \
     wget \
     sudo \
     netcat\
-    nodejs \
-    npm \
     software-properties-common \
-    python-software-properties \
     unzip \
     gcc \
     libsodium-dev \
     build-essential \
+    npm \
     libdb-dev \
     zlib1g-dev \
     libtinfo-dev \
     sysvbanner \
-    wrk \
     psmisc \
     libleveldb-dev
+RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+RUN sudo bash nodesource_setup.sh
+RUN sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+    
 
 # Copy installation script
 COPY ./scripts/install-dependencies.sh /opt
