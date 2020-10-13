@@ -131,10 +131,10 @@ function gopath {
 # Manage GOROOT variable
   if [[ -z "$GOROOT" ]]; then
     echo "[*] Trying default $GOROOT. If the script fails please run $(pwd)/alastria-node/bootstrap.sh or configure GOROOT correctly"
-    echo 'export GOROOT=/usr/lib/go' >> $(pwd)/.bashrc
-    echo 'export GOPATH=$HOME/alastria/workspace' >> $(pwd)/.bashrc
-    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> $(pwd)/.bashrc
-    export GOROOT=/usr/lib/go
+    echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc
+    echo 'export GOPATH=$(pwd)/alastria/workspace' >> /etc/bash.bashrc
+    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> /etc/bash.bashrc
+    export GOROOT=/usr/local/go
     export GOPATH=$(pwd)/alastria/workspace
     export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
@@ -142,9 +142,7 @@ function gopath {
 
     mkdir -p "$GOPATH"/{bin,src}
   fi
-
   # exec "$BASH"
-
 }
 
 function uninstallalastria {
