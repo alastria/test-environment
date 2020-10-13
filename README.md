@@ -8,7 +8,7 @@ This is the branch where the testnet implementation will be upgraded, tested and
 
   - Clone the project
   - Execute `vagrant up`
-  - Once it finishes building you have to perform a `vagrant reload`
+  - Once it finishes building, you have to perform a `vagrant reload`
   - Then, you can communicate with the Virtual Machine through `vagrant ssh` command
   - Notes:
 
@@ -20,9 +20,46 @@ This is the branch where the testnet implementation will be upgraded, tested and
 
 - **Ubuntu 20**
 
-  - `$apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose npm install -g truffle@5.1.48`
+  - Install necessary packages: `$apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose npm install -g truffle@5.1.48`
 
-  - Geth 1.9.5. Recommended procedure:
+  - Clone this project
+
+  - Navigate to the testnet folder: `cd test-environment/infrastructure/testnet`
+
+  - Execute the bootstrap script: `sudo bash bin/bootstrap.sh`
+
+  - Now you can open up a parallel terminal and clone the cbx-quorum-explorer project: `git clone https://github.com/Councilbox/cbx-quorum-explorer.git`
+
+  - Navigate to the newly cloned directory: `cd cbx-quorum-explorer`
+
+  - Create a new folder, that the explorer will use to store its database. It can be wherever you want; we will assume it is the following: `mkdir mongo_data_dir`
+
+  - Modify the docker-compose.yaml.template, that does not work, with the command: `curl https://gist.githubusercontent.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905/raw/83a39419fea1ac6acc53230d83320f337d9df3ad/docker-compose.yaml.template > docker-compose.yaml.template`
+
+  - Change the env.sh file with these parameters (see explanation below, in the "notes" section):
+
+  ```
+  QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
+  ENABLE_SSL=false
+  EXPLORER_PORT=8888
+  API_DOMAIN=localhost
+  MONGO_DATA_DIR=/path/to/mongo_data_dir
+  API_PORT=
+  EXTERNAL_API_PORT=
+  WEBAPP_VERSION=cbx-alastria-telsius
+  ```
+
+  - Build the docker scripts: `bash build.sh`
+
+  - In the terminal where the bootstrap script was running, once it finishes, bring the node up: `sudo bash bin/start_network.sh`
+
+  - Execute the docker container construction processes in the other terminal: `bash launch.sh`
+
+  - Check localhost:22000 to see the block explorer running.
+
+  - You can execute `sudo bash bin/start_ethstats.sh` to see ethstats. Open localhost:3000 in a browser.
+
+  <!-- - Geth 1.9.5. Recommended procedure: -- IS INSTALLED ALONG QUORUM
     ```
     cd /usr/local
     git clone https://github.com/ethereum/go-ethereum.git
@@ -30,7 +67,7 @@ This is the branch where the testnet implementation will be upgraded, tested and
     cd go-ethereum
     git checkout v1.9.5
     make geth
-    ```
+    ``` -->
 
 # CHANGELOG
 
