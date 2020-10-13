@@ -1,0 +1,118 @@
+require 'yaml'
+require 'fileutils'
+
+required_plugins = %w( vagrant-hostmanager vagrant-vbguest vagrant-fsnotify)
+required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+end
+
+config = {
+  local: 'vagrant/config/vconfig/vagrant-local.yml',
+  example: 'vagrant/config/vconfig/vagrant-local.example.yml'
+}
+
+# copy config from example if local config not exists
+FileUtils.cp config[:example], config[:local] unless File.exist?(config[:local])
+# read config
+options = YAML.load_file config[:local]
+
+domains = {
+  frontend: "#{options['domain']}.frontend.test",
+  backend: "#{options['domain']}.backend.test"
+}
+
+# check github token
+#if options['github_token'].nil? || options['github_token'].to_s.length != 40
+#  puts "You must place REAL GitHub token into configuration:\n/yii2-app-advanced/vagrant/config/vagrant-local.yml"
+#  exit
+#end
+
+# vagrant configurate
+Vagrant.configure(2) do |config|
+  # select the box
+  config.vm.box = "bento/ubuntu-20.04"
+  # !! When configured for your own box uncomment this line !!
+  #config.vm.box = 'yii2advanced'
+
+  # should we ask about box updates?
+  config.vm.box_check_update = options['box_check_update']
+
+  config.vm.provider 'virtualbox' do |vb|
+    # machine cpus count
+    vb.cpus = options['cpus']
+    # machine memory size
+    vb.memory = options['memory']
+    # machine name (for VirtualBox UI)
+    vb.name = options['machine_name']
+    # Video Memory configuration ["modifyvm", :id, "--vram", "<vramsize in MB>"]
+    vb.customize ["modifyvm", :id, "--vram", "86"]
+  end
+
+  # machine name (for vagrant console)
+  config.vm.define options['machine_name']
+
+  # machine name (for guest machine console)
+  config.vm.hostname = options['machine_name']
+
+  # network settings (Public network need for VPN connection)
+  config.vm.network :forwarded_port, guest: 80, host: options['gateway']
+  config.vm.network :forwarded_port, guest: 443, host: options['gateway2']
+  config.vm.network :forwarded_port, guest: 8443, host: options['monitor']
+  (9000..9010).each do |i|
+    config.vm.network :forwarded_port, guest: i, host: i
+  end
+  (21000..21010).each do |i|
+    config.vm.network :forwarded_port, guest: i, host: i
+  end
+  (22000..22010).each do |i|
+    config.vm.network :forwarded_port, guest: i, host: i
+  end
+  
+  # set auto_update to false, if you do NOT want to check the correct 
+  # additions version when booting this machine
+  config.vbguest.auto_update = false
+
+  # sync: folder '</yoursharedfolder>' (host machine) -> folder '</guestfolder>' (guest machine)
+  config.vm.synced_folder "#{options['projectfolder']}", "/var/www/vhosts/#{options['domain']}.test", owner: 'vagrant', group: 'www-data', mount_options: ['dmode=775', 'fmode=775']
+
+  # sync: vagrant project folder (host machine) -> folder '/app' (guest machine)
+  config.vm.synced_folder '.', '/vagrant', owner: 'vagrant', group: 'vagrant'
+
+  # disable folder '/vagrant' (guest machine)
+  #config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  # hosts settings (host machine)
+  config.vm.provision :hostmanager
+  config.hostmanager.enabled            = true
+  config.hostmanager.manage_host        = true
+  config.hostmanager.ignore_private_ip  = false
+  config.hostmanager.include_offline    = true
+  config.hostmanager.aliases            = domains.values
+  # To get IP DHCP for hosts file
+  cached_addresses = {}
+  config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
+    if cached_addresses[vm.name].nil?
+    if hostname = (vm.ssh_info && vm.ssh_info[:host])
+      vm.communicate.execute("/sbin/ifconfig eth1 | grep 'inet addr' | tail -n 1 | egrep -o '[0-9\.]+' | head -n 1 2>&1") do |type, contents|
+      cached_addresses[vm.name] = contents.split("\n").first[/(\d+\.\d+\.\d+\.\d+)/, 1]
+      end
+    end
+    end
+    cached_addresses[vm.name]
+  end
+
+  # provisioners
+  # !! You have to comment this two lines if you use your own box !!
+  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-root.sh', args: [options['timezone'], options['domain'], options['gateway'], options['gateway2'], options['monitor'], options['geth_whisper'], options['rpc_external'], options['constellation']]
+  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-vagrant.sh', args: [options[e'domain'], options['migrations']], privileged: false #args: [options['github_token']], privileged: false
+  # Always need this last script to work 
+  config.vm.provision 'shell', path: 'vagrant/config/provision/always-as-root.sh', run: 'always'
+
+  # post-install message (vagrant console)
+  required_plugins = %w( vagrant-hostmanager vagrant-vbguest vagrant-fsnotify)
+  required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+  end
+  config.vm.post_up_message = "If this is the first run, please, reboot the machine using Vagrant reload. You can then access to it through vagrant ssh. Username: vagrant, password: vagrant."
+
+end

@@ -1,0 +1,38 @@
+# Your personal GitHub token
+github_token: <your-personal-github-token>
+# Read more: https://github.com/blog/1509-personal-api-tokens
+# You can generate it here: https://github.com/settings/tokens
+
+# Guest OS timezone
+timezone: Europe/Madrid
+
+# Are we need check box updates for every 'vagrant up'?
+box_check_update: false
+
+# Virtual machine name
+machine_name: testnet
+
+# Forwarded port
+gateway: 80
+gateway2: 443
+monitor: 8443
+constellation: 9000..9010
+geth_whisper: 21000..21010
+rpc_external: 22000..22010
+
+# Project folder
+projectfolder: "."
+
+# Domain name
+domain: testnet
+
+# Apply migrations. Change to 'y' to apply when vagrant up
+migrations: n
+
+# Virtual machine CPU cores number
+# cpus: 4
+cpus: 3
+
+# Virtual machine RAM
+# memory: 4096
+memory: 6144

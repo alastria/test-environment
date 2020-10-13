@@ -2,6 +2,36 @@
 
 This is the branch where the testnet implementation will be upgraded, tested and documented. The resulting work will be merged to the "TidyUp" branch.
 
+# Test Environment Installation:
+
+- **VAGRANT (preferred)**
+
+  - Clone the project
+  - Execute `vagrant up`
+  - Once it finishes building you have to perform a `vagrant reload`
+  - Then, you can communicate with the Virtual Machine through `vagrant ssh` command
+  - Notes:
+
+    You can change the parameters of the virtual machine in `vagrant/config/vconfig/vagrant-local-example.yml` BEFORE the first execution. The parameters are self-explanatory. The recommended parameters are the ones already in place.
+
+    You require to have installed Virtualbox and Vagrant into your machine.
+
+    If the `vagrant up` command stops shortly after first execution and there is not any error message, just keep executing it. Vagrant is installing its required plugins.
+
+- **Ubuntu 20**
+
+  - `$apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose npm install -g truffle@5.1.48`
+
+  - Geth 1.9.5. Recommended procedure:
+    ```
+    cd /usr/local
+    git clone https://github.com/ethereum/go-ethereum.git
+    PATH="$PATH:/usr/local/go-ethereum"
+    cd go-ethereum
+    git checkout v1.9.5
+    make geth
+    ```
+
 # CHANGELOG
 
 Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be ported to Ubuntu 18.04 LTS.
@@ -65,7 +95,7 @@ Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be 
   MONGO_DATA_DIR=/home/vagrant/projects/cbx-quorum-explorer/mongo_data_dir #This file has to be created beforehand. It will be external to Docker.
   API_PORT=8886 #It MUST remain empty for local usage
   EXTERNAL_API_PORT=8885 #It MUST remain empty for local usage
-  WEBAPP_VERSION=cbx
+  WEBAPP_VERSION=cbx-alastria-telsius
   ```
 
   The `docker-compose.yaml.template` file must be replaced with this one: https://gist.github.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905

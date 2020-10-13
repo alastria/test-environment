@@ -11,6 +11,7 @@ function superuser {
 
 function installgo {
   GOREL="go1.9.5.linux-amd64.tar.gz"
+  PATH="$PATH:/usr/local/go/bin"
   if ( ! type "go" > /dev/null 2>&1 )
   then
     PATH="$PATH:/usr/local/go/bin"
