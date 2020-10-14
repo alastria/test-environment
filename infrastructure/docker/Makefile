@@ -43,7 +43,7 @@ build: build-base-image build-alastria
 build-base-image:
 	docker build --build-arg http_proxy=$(PROXY) -t alastria-base -f Dockerfile.base .
 
-build-alastria: 
+build-alastria:
 	docker build --build-arg http_proxy=$(PROXY) -t alastria-node:$(VERSION) .
 
 node-shell: build
