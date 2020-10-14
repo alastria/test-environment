@@ -14,6 +14,9 @@ PROXY ?= ${HTTP_PROXY}
 # Alastria node start type and node name
 TYPE ?= 
 NAME ?= 
+VERSION_UBUNTU ?=18
+VALIDATORS ?=2
+REGULARS ?=3
 # Network ports
 CONSTELLATION_PORT ?= 9000:9000
 GETH_PORT_TCP ?= 21000-21010:21000-21010/tcp
@@ -41,7 +44,11 @@ include ./includes/$(osinclude)
 build: build-base-image build-alastria
 
 build-base-image:
-	docker build --build-arg http_proxy=$(PROXY) -t alastria-base -f Dockerfile.base .
+        ifeq ($(VERSION_UBUNTU),18)
+		docker build --build-arg http_proxy=$(PROXY) -t alastria-base -f Dockerfile.base .
+        else
+		docker build --build-arg http_proxy=$(PROXY) -t alastria-base -f Dockerfile20.base .
+        endif
 
 build-alastria:
 	docker build --build-arg http_proxy=$(PROXY) -t alastria-node:$(VERSION) .
@@ -64,4 +71,3 @@ clean:
 
 stop:
 	docker ps -a | grep "alastria" | awk '{print $$1}' | xargs -I % sh -c 'docker stop %; docker rm %;'
-	
