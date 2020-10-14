@@ -19,6 +19,9 @@ monitor: 8443
 constellation: 9000..9010
 geth_whisper: 21000..21010
 rpc_external: 22000..22010
+ethstats: 3000
+block_explorer: 8888
+block_explorer_api: 8080
 
 # Project folder
 projectfolder: "."

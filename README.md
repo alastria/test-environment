@@ -18,6 +18,8 @@ A decision has been made about scripts: considering that the system is installed
 
     You can change the parameters of the virtual machine in `vagrant/config/vconfig/vagrant-local-example.yml` BEFORE the first execution. The parameters are self-explanatory. The recommended parameters are the ones already in place.
 
+    Take into account that the ports that have more than one value are not currently working, so they must be set in the Vagranfile.
+
     You require to have installed Virtualbox and Vagrant into your machine.
 
     If the `vagrant up` command stops shortly after first execution and there is not any error message, just keep executing it. Vagrant is installing its required plugins.
@@ -50,7 +52,7 @@ A decision has been made about scripts: considering that the system is installed
   MONGO_DATA_DIR=/path/to/mongo_data_dir
   API_PORT=
   EXTERNAL_API_PORT=
-  WEBAPP_VERSION=cbx-alastria-telsius
+  WEBAPP_VERSION=alastria-telsius
   ```
 
   - Build the docker scripts: `bash build.sh`
@@ -59,11 +61,11 @@ A decision has been made about scripts: considering that the system is installed
 
   - Execute the docker container construction processes in the other terminal: `bash launch.sh`
 
-  - Check localhost:22000 to see the block explorer running.
+  - Check localhost:8888 to see the block explorer running. You can customize the port in the vagrant-local-example file and in the EXPLORER_PORT variable of the env.sh file.
 
   - You can execute `sudo bash bin/start_ethstats.sh` to see ethstats. Open localhost:3000 in a browser.
 
-  - You can send transactions through geth or truffle. Just use a terminal to execute either of them. Alternatively, you can now clone the alastria-lib-example and alastria-lib repositories.
+  - You can send transactions through geth or truffle. Just use a terminal to execute either of them. Alternatively, you can now clone the alastria-lib-example and alastria-lib repositories. [WIP]
 
   <!-- - Geth 1.9.5. Recommended procedure: -- IS INSTALLED ALONG QUORUM
     ```
@@ -126,3 +128,27 @@ Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be 
 - **Other changes and notes**:
 
   - In Ubuntu 20 it has been mandatory to install libtinfo5 because it's the version used by Constellation
+  - CBX Quorum explorer: (https://github.com/Councilbox/cbx-quorum-explorer/)[GitHub]
+
+  File env.sh:
+
+  ```
+  QUORUM_ENDPOINTS=http://localhost:22000,localhos:22001,etc #It is irrelevant to add the http or not. BEWARE OF SPACES
+  ENABLE_SSL=false #In lower case
+  EXPLORER_PORT=8888
+  API_DOMAIN=localhost
+  MONGO_DATA_DIR=/home/vagrant/projects/cbx-quorum-explorer/mongo_data_dir #This file has to be created beforehand. It will be external to Docker.
+  API_PORT=8886 #It MUST remain empty for local usage
+  EXTERNAL_API_PORT=8885 #It MUST remain empty for local usage
+  WEBAPP_VERSION=alastria-telsius
+  ```
+
+  The `docker-compose.yaml.template` file must be replaced with this one: https://gist.github.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905
+
+  The Docker container inside each folder must be built before executing `launch.sh` script:
+
+  `$cd http_api`
+
+  `$sudo bash build.sh`
+
+  It is mandatory to execute `launch.sh` with sudo.

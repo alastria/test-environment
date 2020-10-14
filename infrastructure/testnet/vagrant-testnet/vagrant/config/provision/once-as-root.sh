@@ -31,32 +31,21 @@ apt-get update
 apt-get upgrade -y
 
 info "Installing software..."
-apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose > /dev/null
-npm install -g truffle@5.1.48 > /dev/null
-
-# cd /usr/local
-# git clone https://github.com/ethereum/go-ethereum.git
-# PATH="$PATH:/usr/local/go-ethereum"
-# cd go-ethereum
-# git checkout v1.9.5
-# make geth
-# if ( ! type "geth" > /dev/null 2>&1 ) then
-#   echo "Making geth from repository failed. Trying to install via Snap. BEWARE: version may change. This could result in errors."
-#   snap install geth #BEWARE: version may change
-# fi
+apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose
+npm install -g truffle@5.1.48
 
 info "Cloning and initializing testnet related repositories..."
 cd /home/vagrant
-git clone https://github.com/alastria/test-environment.git --no-verbose
+git clone https://github.com/alastria/test-environment.git
 cd test-environment
 git checkout 33dc30bf0e78ea697479a55fec061d4f9a849f76 
 cd infrastructure/testnet
 bash bin/bootstrap.sh
 cd /home/vagrant
-git clone https://github.com/Councilbox/cbx-quorum-explorer.git --no-verbose
+git clone https://github.com/Councilbox/cbx-quorum-explorer.git
 cd cbx-quorum-explorer
 mkdir mongo_data_dir
-curl https://gist.githubusercontent.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905/raw/83a39419fea1ac6acc53230d83320f337d9df3ad/docker-compose.yaml.template > docker-compose.yaml.template
+bash -c "curl https://gist.githubusercontent.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905/raw/83a39419fea1ac6acc53230d83320f337d9df3ad/docker-compose.yaml.template > docker-compose.yaml.template"
 read -r -d '' env << EOF
 QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
 ENABLE_SSL=false
@@ -65,10 +54,10 @@ API_DOMAIN=localhost
 MONGO_DATA_DIR=/home/vagrant/cbx-quorum-explorer/mongo_data_dir
 API_PORT=
 EXTERNAL_API_PORT=
-WEBAPP_VERSION=cbx-alastria-telsius
+WEBAPP_VERSION=alastria-telsius
 EOF
 echo "$env" > env.sh
-bash build.sh > /dev/null
-bash launch.sh > /dev/null
+bash build.sh
+bash launch.sh
 
 info "Finished installing VM"
