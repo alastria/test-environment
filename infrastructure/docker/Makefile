@@ -19,7 +19,7 @@ CONSTELLATION_PORT ?= 9000:9000
 GETH_PORT_TCP ?= 21000-21010:21000-21010/tcp
 GETH_PORT_UDP ?= 21000-21010:21000-21010/udp
 RPC_PORT ?= 22000-22010:22000-22010
-
+ETHSTATS_PORT ?=3000:3000
 #    ___  ____    ___            _           _
 #   / _ \/ ___|  |_ _|_ __   ___| |_   _  __| | ___
 #  | | | \___ \   | || '_ \ / __| | | | |/ _` |/ _ \
@@ -57,8 +57,8 @@ install-test-basic:
 	docker run --name $(NAME) -d alastria-node:$(VERSION) bash -c "./start.sh $(TYPE)"
 
 complete:
-	docker run -p $(CONSTELLATION_PORT) -p $(GETH_PORT_TCP) -p $(GETH_PORT_UDP) -p $(RPC_PORT) \
-        -it -d alastria-node:$(VERSION) bash -c "/opt/test-environment/infrastructure/testnet/bin/start_network.sh clean 2 3 && /opt/test-environment/infrastructure/testnet/bin/start_ethstats"
+	docker run -p $(CONSTELLATION_PORT) -p $(GETH_PORT_TCP) -p $(GETH_PORT_UDP) -p $(RPC_PORT) -p $(ETHSTATS_PORT) \
+        -it -d alastria-node:$(VERSION) bash -c "/opt/test-environment/infrastructure/testnet/bin/start_network.sh clean 2 3 && tail -f /dev/null"
 clean:
 	docker images -a | grep "alastria" | awk '{print $$3}' | xargs docker rmi -f
 

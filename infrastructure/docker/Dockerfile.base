@@ -18,16 +18,20 @@ RUN apt-get update && apt-get install -y \
     libsodium-dev \
     build-essential \
     npm \
+    nodejs \	
     libdb-dev \
     zlib1g-dev \
     libtinfo-dev \
     sysvbanner \
     psmisc \
     libleveldb-dev
-RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
-RUN sudo bash nodesource_setup.sh
+#RUN ln -s /usr/bin/nodejs /usr/bin/node
+#RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+#RUN sudo bash nodesource_setup.sh
 RUN sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-    
+#RUN cd /usr/share/npm \
+#&& npm install fs-extra \
+#&& sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js    
 
 # Copy installation script
 COPY ./scripts/install-dependencies.sh /opt
