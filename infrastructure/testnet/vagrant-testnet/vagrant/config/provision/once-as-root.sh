@@ -46,6 +46,7 @@ git clone https://github.com/Councilbox/cbx-quorum-explorer.git
 cd cbx-quorum-explorer
 mkdir mongo_data_dir
 bash -c "curl https://gist.githubusercontent.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905/raw/83a39419fea1ac6acc53230d83320f337d9df3ad/docker-compose.yaml.template > docker-compose.yaml.template"
+sed -n 'H;${x;s/^\n//;s/  http-api:/&\n    network_mode: "host"/;p;}' docker-compose.yaml.template | tee docker-compose.yaml.template 2>/dev/null
 read -r -d '' env << EOF
 QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
 ENABLE_SSL=false
