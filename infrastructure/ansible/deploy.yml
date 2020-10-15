@@ -29,7 +29,3 @@
     - import_tasks: nodes.yml
       tags:
         - nodes
-
-    #- import_tasks: cakeshop.yml
-    #  tags:
-    #    - cakeshop
