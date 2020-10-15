@@ -18,7 +18,7 @@ cd /opt
 rm -rf alastria-node
 
 # Clone the repo and cd into it
-git clone --depth 1 https://github.com/fooock/alastria-node.git
+git clone https://github.com/alastria/alastria-node.git
 cd alastria-node/
 
 # Install dependencies
@@ -33,4 +33,4 @@ else
 fi
 
 # Clone Alastria test environment
-cd .. && git clone --depth 1 https://github.com/fooock/test-environment
+cd .. && git clone --depth 1 https://github.com/alastria/test-environment
