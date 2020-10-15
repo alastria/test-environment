@@ -4,7 +4,6 @@ set -e
 MESSAGE='Usage: stop_node <node_name>
     node-name: main | generalx | validatorx'
 
-
 if ( [ $# -ne 1 ] ); then
     echo "$MESSAGE"
     exit
@@ -25,7 +24,6 @@ case "$1" in
     echo "[*] Killing node $1"
     ;;
 esac
-
 
 set +u
 set +e

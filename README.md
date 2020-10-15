@@ -12,15 +12,12 @@ A decision has been made about scripts: considering that the system is installed
 
   - Clone the project
   - Execute `vagrant up`
-  - Once it finishes building, you have to perform a `vagrant reload`
-  - Then, you can communicate with the Virtual Machine through `vagrant ssh` command
+  - Once it finishes building, you have to perform a `vagrant reload`, as it is prompted from console
+  - Then, you can communicate with the Virtual Machine through `vagrant ssh` command and view the ethstats and the block explorer from [http://localhost:3000](http://localhost:3000) and [http://localhost:8888](http://localhost:8888), respectively.
   - Notes:
 
-    You can change the parameters of the virtual machine in `vagrant/config/vconfig/vagrant-local-example.yml` BEFORE the first execution. The parameters are self-explanatory. The recommended parameters are the ones already in place.
+    You can change the parameters of the virtual machine in `vagrant/config/vconfig/vagrant-local-example.yml` BEFORE the first execution. The parameters are self-explanatory. The recommended parameters are the ones already in place. If you change the ethstats or block_explorer ports, use them instead of the ones in the previous paragraph.
 
-    Take into account that the ports that have more than one value are not currently working, so they must be set in the Vagranfile.
-
-    You require to have installed Virtualbox and Vagrant into your machine.
 
     If the `vagrant up` command stops shortly after first execution and there is not any error message, just keep executing it. Vagrant is installing its required plugins.
 
@@ -40,7 +37,7 @@ A decision has been made about scripts: considering that the system is installed
 
   - Create a new folder, that the explorer will use to store its database. It can be wherever you want; we will assume it is the following: `mkdir mongo_data_dir`
 
-  - Modify the docker-compose.yaml.template, that does not work, with the command: `curl https://gist.githubusercontent.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905/raw/83a39419fea1ac6acc53230d83320f337d9df3ad/docker-compose.yaml.template > docker-compose.yaml.template`
+  - Modify the docker-compose.yaml.template, that does not work, with the command: `curl https://raw.githubusercontent.com/alastria/test-environment/feature/tidyup-testnet/infrastructure/common/docker-compose.yaml.template > docker-compose.yaml.template`
 
   - Change the env.sh file with these parameters (see explanation below, in the "notes" section):
 
@@ -77,44 +74,45 @@ A decision has been made about scripts: considering that the system is installed
     make geth
     ``` -->
 
+- **Ubuntu 18**
+
+  - WIP
+
+
 # CHANGELOG
 
-Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be ported to Ubuntu 18.04 LTS.
+Note that this has been developed in Ubuntu 20.04 LTS.
+WIP: porting to Ubuntu 18.04 LTS.
 
 - **infrastructure/testnet/bin/bootstrap.sh**
 
   - Added call to the bootstrap.sh of the repository of alastria-node, copied into `infrastructure/testnet/bin`
-  - Changed variable definition: `"${pwd}"` => `"$(pwd)"`
-  - Commented out the package installation for the time being, while development takes place. Possibly it will be removed or at least outsourced.
+  - Deleted the package installation instructions. The necessary packages are documented or will be installed in the Vagrant provisioner.
   - The script SHOULD be run using `sudo bash bin/bootstrap.sh` so it executes all the functions as it should.
+
 
 - **infrastructure/testnet/bin/bootstrap-alastria-node.sh**
 
   - This is the alastria-node repository bootstrap script. Copied into this one for two reasons: the first is to reduce the time of execution at least while developing. The main reason, however, is to fix some issues with that script: this is a test environment and is meant for testing but also for enhancing the current working environment and more importantly, to have it working properly without strange workarounds. That said, it will remain as close as possible to the real environment (paths, software versions when possible, etc).
-  - Changed all occurrences of `$HOME` beacuse it defaults to `/root` as soon as the first "superuser" function gets executed: `$HOME` => `$(pwd)`
-  - Commented out last command of GOPATH function because it stopped script execution: `exec "$BASH"`
-  - Commented out the package installation for the time being, while development takes place. Possibly it will be removed or at least outsourced.
-  - Changed the `fixconstellation` function so it works standalone:
-
-    ```
-    if [ $sodiumrel = "notfound" ]
-      then
-        installedpath=$(whereis libsodium 2>/dev/null | grep libsodium.so |  cut -d ' ' -f2 | sed 's/libsodium.so//' | tr -d '[:space:]')
-        if [[ -d $installedpath ]]
-        then
-          echo "The libsodium package version in the distribution mismatches the one linked in constellation. Symlinking"
-          superuser ln -s $installedpath/libsodium.so /lib64/libsodium.so.18
-          superuser cp $installedpath/libsodium.so $installedpath/libsodium.so.18
-          superuser cp $installedpath/libleveldb.so $installedpath/libleveldb.so.1
-          superuser ldconfig
-        else
-    ```
-
+  - Deleted all occurrences of `$HOME` beacuse it defaults to `/root` as soon as the first "superuser" function gets executed. Now the paths are absolute.
+  - Deleted last command of GOPATH function because it stopped script execution: `exec "$BASH"`
+  - Deleted the package installation instructions. The necessary packages are documented or will be installed in the Vagrant provisioner.
+  - Hardcoded the paths for the `fixconstellation` function because the libsodium installation is known. If using another OS, please, change the paths accordingly.
   - Changed Quorum version to Consensys 2.6 instead of Alastria 2.2 (this is an upcoming change to Alastria-node environment.
 
 - **infrastructure/testnet/bin/start-node.sh**
 
   - Added the `env PRIVATE_CONFIG=ignore` modifier in the node initialization. This is due to the Quorum update and a temporary change just to have the script working properly.
+
+
+- **infrastructure/testnet/vagrant-testnet/vagrant/config/provision/once-as-root.sh**
+
+  - Cleaned the script as much as possible.
+
+- **infrastructure/testnet/vagrant-testnet/vagrant/config/provision/always-as-root.sh**
+
+  - Commented out the start ethstats command. Ethstats is known for clogging up the machines where it runs. You can always start it manually.
+  
 
 - **TBD**:
 
@@ -122,33 +120,9 @@ Note that this has been developed in Ubuntu 20.04 LTS. If neccessary it will be 
     https://stackoverflow.com/questions/19622198/what-does-set-e-mean-in-a-bash-script
     https://stackoverflow.com/questions/3474526/stop-on-first-error
     http://mywiki.wooledge.org/BashFAQ/105
-  - Consider to avoid the installation of packages or at least the apt-get-upgrade command.
   - **IMPORTANT**: Consider to lock package versions so there are no issues with that in the future. In the case of a container like docker or a Vagrant installation, the packages should already be installed. This can potentially break the scripts and lead to security and/or performance issues.
 
 - **Other changes and notes**:
 
-  - In Ubuntu 20 it has been mandatory to install libtinfo5 because it's the version used by Constellation
-  - CBX Quorum explorer: (https://github.com/Councilbox/cbx-quorum-explorer/)[GitHub]
 
-  File env.sh:
-
-  ```
-  QUORUM_ENDPOINTS=http://localhost:22000,localhos:22001,etc #It is irrelevant to add the http or not. BEWARE OF SPACES
-  ENABLE_SSL=false #In lower case
-  EXPLORER_PORT=8888
-  API_DOMAIN=localhost
-  MONGO_DATA_DIR=/home/vagrant/projects/cbx-quorum-explorer/mongo_data_dir #This file has to be created beforehand. It will be external to Docker.
-  API_PORT=8886 #It MUST remain empty for local usage
-  EXTERNAL_API_PORT=8885 #It MUST remain empty for local usage
-  WEBAPP_VERSION=alastria-telsius
-  ```
-
-  The `docker-compose.yaml.template` file must be replaced with this one: https://gist.github.com/brunneis/f6ffc3898635f2ab5718f8ab0f5f6905
-
-  The Docker container inside each folder must be built before executing `launch.sh` script:
-
-  `$cd http_api`
-
-  `$sudo bash build.sh`
-
-  It is mandatory to execute `launch.sh` with sudo.
+  - The commit used in the provisioner should be the last stable testnet commit. It will already be in place, but double-check that.

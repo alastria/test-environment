@@ -13,7 +13,6 @@ MESSAGE='Usage: start_network <mode> <number-validators-nodes> <number-gws-nodes
     FAULTY_FLAG=""
     FAULTY_MODE=""
 
-
 if ( [ $# -lt 3 ] ); then
     echo "$MESSAGE"
     exit
@@ -94,11 +93,6 @@ start_gws () {
 
 start_validators $2 #$4 $5
 start_gws $3
-
-
-
-
-
 
 set +u
 set +e
