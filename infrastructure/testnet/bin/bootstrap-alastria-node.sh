@@ -14,7 +14,8 @@ function installgo {
   PATH="$PATH:/usr/local/go/bin"
   if ( ! type "go" > /dev/null 2>&1 )
   then
-    PATH="$PATH:/usr/local/go/bin"
+    # echo 'PATH=$PATH:/usr/local/go/bin' >> /etc/bash.bashrc
+    # echo 'PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc
     echo "Installing GO"
     wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
     pushd /tmp
@@ -131,8 +132,11 @@ function gopath {
 # Manage GOROOT variable
   if [[ -z "$GOROOT" ]]; then
     echo "[*] Trying default $GOROOT. If the script fails please run $(pwd)/alastria-node/bootstrap.sh or configure GOROOT correctly"
+    echo 'export GOROOT=/usr/local/go' >> /root/.bashrc
     echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc
+    echo 'export GOPATH=$(pwd)/alastria/workspace' >> /root/.bashrc
     echo 'export GOPATH=$(pwd)/alastria/workspace' >> /etc/bash.bashrc
+    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> /root/.bashrc
     echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> /etc/bash.bashrc
     export GOROOT=/usr/local/go
     export GOPATH=$(pwd)/alastria/workspace
