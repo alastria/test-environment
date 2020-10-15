@@ -1,0 +1,50 @@
+FROM ubuntu:20.04
+LABEL maintainer="Carlos Morales <cmoralesdiego@deloitte.es>"
+ENV TZ=Europe/Madrid
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+#RUN apt update && apt install -y python-pip python-dev ssh python-boto3
+#RUN pip  install ansible==2.4.3.0
+ENV http_proxy ${http_proxy}
+ENV https_proxy ${http_proxy}
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    make \
+    wget \
+    sudo \
+    netcat\
+    software-properties-common \
+    unzip \
+    gcc \
+    libsodium-dev \
+    build-essential \
+    npm \
+    nodejs \	
+    libdb-dev \
+    zlib1g-dev \
+    libtinfo-dev \
+    sysvbanner \
+    psmisc \
+    libleveldb-dev
+#RUN ln -s /usr/bin/nodejs /usr/bin/node
+#RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+#RUN sudo bash nodesource_setup.sh
+RUN sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+RUN sudo cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
+RUN sudo apt install libtinfo5
+#RUN cd /usr/share/npm \
+#&& npm install fs-extra \
+#&& sed -i -e s/graceful-fs/fs-extra/ -e s/fs.rename/fs.move/ ./lib/utils/rename.js    
+
+# Copy installation script
+COPY ./scripts/install-dependencies.sh /opt
+
+# Install all dependencies
+RUN chmod +x /opt/install-dependencies.sh && \
+    /opt/install-dependencies.sh $http_proxy && \
+    rm -rf /opt/install-dependencies.sh
+
+# Change working directory
+WORKDIR /opt
