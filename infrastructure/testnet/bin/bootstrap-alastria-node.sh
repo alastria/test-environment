@@ -1,32 +1,5 @@
 #!/bin/bash
 
-if ( [ "uninstall" == "$1" ] )
-then
-  uninstallalastria
-elif ( [ "reinstall" == "$1" ] )
-then
-   uninstallalastria
-   installalastria
-else
-  installalastria
-fi
-
-function installalastria {
-  set -e
-  checkgo
-  installconstellation
-  installquorum
-  gopath
-  set +e
-}
-
-function uninstallalastria {
-  superuser rm -rf /usr/local/go 2>/dev/null
-  superuser rm /usr/local/bin/constellation-node 2>/dev/null
-  superuser rm /usr/local/bin/geth 2>/dev/null
-  rm -rf /tmp/* 2>/dev/null
-}
-
 function checkgo {
   if ( ! type "go" > /dev/null 2>&1 )
   then
@@ -53,8 +26,8 @@ function installgo {
   wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
   pushd /tmp
   tar xvzf $GOREL
-  superuser rm -rf /usr/local/go
-  superuser mv /tmp/go /usr/local/go
+  sudo rm -rf /usr/local/go
+  sudo mv /tmp/go /usr/local/go
   popd
   rm -rf /tmp/go
 }
@@ -68,27 +41,36 @@ function installconstellation {
     pushd /tmp
     unxz $constellationrel.tar.xz
     tar -xf $constellationrel.tar
-    superuser cp $constellationrel/constellation-node /usr/local/bin
-    superuser chmod 0755 /usr/local/bin/constellation-node
-    superuser rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
+    sudo cp $constellationrel/constellation-node /usr/local/bin
+    sudo chmod 0755 /usr/local/bin/constellation-node
+    sudo rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
     popd
   fi
     fixconstellation
 }
 
 function fixconstellation {
-  #Ubuntu 20 does not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation
-  superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so /lib64/libsodium.so.18
-  superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so /usr/lib/x86_64-linux-gnu/libsodium.so.18
-  superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so /usr/lib/x86_64-linux-gnu/libleveldb.so.1
-  superuser ldconfig
-  #Checking if fix has worked:
-  installedpath=$(whereis libsodium.so.* 2>/dev/null | sed 's/ /\n/g' | grep libsodium.so.18$ | sed 's/libsodium.so.18//' | tr -d '[:space:]')
-  if [[ -d $installedpath ]]
-  then
-    echo "Libsodium install fixed"
+  #Ubuntu 18 or 20 does not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation. Libsodium 18 was packed in Ubuntu 16, which is the version of Constellation.
+  alreadyinstalled=$(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18)
+  OS=$(cat /etc/issue | grep -Po "(18|20)")
+  if [ $OS = "20" ]
+    sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+    sudo cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
+    sudo ldconfig
+  else if [ $OS = "18" ]
+    sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+    sudo ldconfig
+  else if [ $alreadyinstalled = "libsodium.so.18" ]
+    echo "libsodium.18 already fixed. Skipping"
   else
-    echo "WARNING: Not able to fix libsodium install"
+    echo "OS not supported. Please, perform this process manually and retry."
+  fi
+  #Checking if fix has worked:
+  if [[ $alreadyinstalled != "libsodium.so.18" ]]
+  then
+    echo "WARNING: Not able to fix libsodium install. Please, perform this process manually and retry."
     exit
   fi
 }
@@ -102,8 +84,8 @@ function installquorum {
     cd quorum
     git checkout 9339be03f9119ee488b05cf087d103da7e68f053 #2.6.0
     make all
-    superuser cp build/bin/geth /usr/local/bin
-    superuser cp build/bin/bootnode /usr/local/bin
+    sudo cp build/bin/geth /usr/local/bin
+    sudo cp build/bin/bootnode /usr/local/bin
     popd
     rm -rf /tmp/quorum
   fi
@@ -126,3 +108,30 @@ function gopath {
     mkdir -p "$GOPATH"/{bin,src}
   fi
 }
+
+function installalastria {
+  set -e
+  checkgo
+  installconstellation
+  installquorum
+  gopath
+  set +e
+}
+
+function uninstallalastria {
+  sudo rm -rf /usr/local/go 2>/dev/null
+  sudo rm /usr/local/bin/constellation-node 2>/dev/null
+  sudo rm /usr/local/bin/geth 2>/dev/null
+  rm -rf /tmp/* 2>/dev/null
+}
+
+if ( [ "uninstall" == "$1" ] )
+then
+  uninstallalastria
+elif ( [ "reinstall" == "$1" ] )
+then
+   uninstallalastria
+   installalastria
+else
+  installalastria
+fi

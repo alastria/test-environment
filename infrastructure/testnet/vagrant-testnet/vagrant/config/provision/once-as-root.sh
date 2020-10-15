@@ -48,6 +48,7 @@ mkdir mongo_data_dir
 bash -c "curl https://raw.githubusercontent.com/alastria/test-environment/feature/tidyup-testnet/infrastructure/common/docker-compose.yaml.template > docker-compose.yaml.template"
 read -r -d '' env << EOF
 QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
+QUORUM_HOST=localhost
 ENABLE_SSL=false
 EXPLORER_PORT=8888
 API_DOMAIN=localhost
