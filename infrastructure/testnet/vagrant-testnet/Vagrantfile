@@ -30,7 +30,7 @@ domains = {
 # vagrant configurate
 Vagrant.configure(2) do |config|
   # select the box
-  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.box = options['ubuntu']
   # !! When configured for your own box uncomment this line !!
   #config.vm.box = 'yii2advanced'
 
