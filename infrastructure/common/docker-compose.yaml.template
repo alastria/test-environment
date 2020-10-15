@@ -42,7 +42,6 @@ services:
     environment:
       - EXTRA_DATA_FORMAT=ibft
     logging: *default-logging
-    network_mode: "host"
     depends_on:
       - mongodb
 
