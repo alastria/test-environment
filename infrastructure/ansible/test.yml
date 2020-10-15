@@ -21,9 +21,9 @@
     #   tags:
     #     - netstats
 
-     - import_tasks: etherbase.yml
-       tags:
-         - etherbase
+    # - import_tasks: etherbase.yml
+    #   tags:
+    #     - etherbase
 
     # TODO Left out for now
     # - import_tasks: nodes.yml
