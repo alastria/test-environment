@@ -53,7 +53,7 @@ function installconstellation {
 
 function fixconstellation {
   #Ubuntu 18 or 20 does not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation. Libsodium 18 was packed in Ubuntu 16, which is the version of Constellation.
-  alreadyfixed=$(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18)
+  alreadyfixed=$([ $(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18) ] && echo "libsodium.so.18" || echo "NOTFOUND")
   OS=$(cat /etc/issue | grep -Po "(18|20)")
   if [ $OS = "20" ]
     then
