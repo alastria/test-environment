@@ -40,6 +40,9 @@ cpus: 3
 # memory: 4096
 memory: 6144
 
+# Define which test-environment commit to use. Recommended last documented "stable one"
+commit: "DEFINE-A-COMMIT"
+
 # Ubuntu version. Uncomment the line containing the version you want to use.
 ubuntu: "bento/ubuntu-20.04" #For Ubuntu 20.04 LTS
 # ubuntu: "bento/ubuntu-18.04" #For Ubuntu 18.04 LTS

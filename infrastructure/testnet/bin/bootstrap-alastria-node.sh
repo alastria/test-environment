@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function checkgo {
+  PATH=$PATH:/usr/local/go/bin
   if ( ! type "go" > /dev/null 2>&1 )
   then
     installgo
@@ -20,8 +21,10 @@ function checkgo {
 
 function installgo {
   GOREL="go1.9.5.linux-amd64.tar.gz"
-  echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/bash.bashrc
-  echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc
+  echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/bash.bashrc
+  echo "export PATH=$PATH:/usr/local/go/bin" >> /root/.bashrc
+  echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.bashrc
+  echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.profile
   echo "Installing GO"
   wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
   pushd /tmp
@@ -46,29 +49,31 @@ function installconstellation {
     sudo rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
     popd
   fi
-    fixconstellation
 }
 
 function fixconstellation {
   #Ubuntu 18 or 20 does not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation. Libsodium 18 was packed in Ubuntu 16, which is the version of Constellation.
-  alreadyinstalled=$(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18)
+  alreadyfixed=$(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18)
   OS=$(cat /etc/issue | grep -Po "(18|20)")
   if [ $OS = "20" ]
-    sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-    sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-    sudo cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
-    sudo ldconfig
-  else if [ $OS = "18" ]
-    sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-    sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-    sudo ldconfig
-  else if [ $alreadyinstalled = "libsodium.so.18" ]
-    echo "libsodium.18 already fixed. Skipping"
+    then
+      sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+      sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+      sudo cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
+      sudo ldconfig
+  elif [ $OS = "18" ]
+    then
+      sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+      sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+      sudo ldconfig
+  elif [ $alreadyfixed = "libsodium.so.18" ]
+    then
+      echo "libsodium.18 already fixed. Skipping"
   else
     echo "OS not supported. Please, perform this process manually and retry."
   fi
   #Checking if fix has worked:
-  if [[ $alreadyinstalled != "libsodium.so.18" ]]
+  if [[ $alreadyfixed != "libsodium.so.18" ]]
   then
     echo "WARNING: Not able to fix libsodium install. Please, perform this process manually and retry."
     exit
@@ -113,6 +118,7 @@ function installalastria {
   set -e
   checkgo
   installconstellation
+  fixconstellation
   installquorum
   gopath
   set +e

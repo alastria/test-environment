@@ -3,9 +3,7 @@
 #== Import script args ==
 
 timezone=$(echo "$1")
-domain=$(echo "$2")
-frontendport=$(echo "$3")
-backendport=$(echo "$4")
+commit=$(echo "$2")
 
 #== Bash helpers ==
 
@@ -38,7 +36,7 @@ info "Cloning and initializing testnet related repositories..."
 cd /home/vagrant
 git clone https://github.com/alastria/test-environment.git
 cd test-environment
-git checkout 21583a58c32747fe22b0c2120c688afd4056d72e 
+git checkout ${commit}
 cd infrastructure/testnet
 bash bin/bootstrap.sh
 cd /home/vagrant

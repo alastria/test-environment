@@ -106,8 +106,8 @@ Vagrant.configure(2) do |config|
 
   # provisioners
   # !! You have to comment this two lines if you use your own box !!
-  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-root.sh', args: [options['timezone'], options['domain'], options['gateway'], options['gateway2'], options['monitor'], options['geth_whisper'], options['rpc_external'], options['constellation']]
-  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-vagrant.sh', args: [options['domain'], options['migrations']], privileged: false #args: [options['github_token']], privileged: false
+  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-root.sh', args: [options['timezone'], options['commit']]
+  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-vagrant.sh', privileged: false
   # Always need this last script to work 
   config.vm.provision 'shell', path: 'vagrant/config/provision/always-as-root.sh', run: 'always'
 
