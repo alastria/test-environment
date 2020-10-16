@@ -12,13 +12,16 @@ box_check_update: false
 # Virtual machine name
 machine_name: testnet
 
-# Forwarded port
+# Forwarded ports
 gateway: 80
 gateway2: 443
 monitor: 8443
-constellation: 9000..9010
-geth_whisper: 21000..21010
-rpc_external: 22000..22010
+constellation_first: 9000
+constellation_last: 9010
+geth_whisper_first: 21000
+geth_whisper_last: 21010
+rpc_external_first: 22000
+rpc_external_last: 22010
 ethstats: 3000
 block_explorer: 8888
 block_explorer_api: 8080
@@ -29,9 +32,6 @@ projectfolder: "."
 # Domain name
 domain: testnet
 
-# Apply migrations. Change to 'y' to apply when vagrant up
-migrations: n
-
 # Virtual machine CPU cores number
 # cpus: 4
 cpus: 3
@@ -41,7 +41,7 @@ cpus: 3
 memory: 6144
 
 # Define which test-environment commit to use. Recommended last documented "stable one"
-commit: "DEFINE-A-COMMIT"
+commit: "DEFINE_A_COMMIT"
 
 # Ubuntu version. Uncomment the line containing the version you want to use.
 ubuntu: "bento/ubuntu-20.04" #For Ubuntu 20.04 LTS
