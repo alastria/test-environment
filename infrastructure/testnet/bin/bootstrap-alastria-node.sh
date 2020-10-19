@@ -1,5 +1,14 @@
 #!/bin/bash
 
+function superuser {
+  if ( type "sudo"  > /dev/null 2>&1 )
+  then
+    sudo $@
+  else
+    eval $@
+  fi
+}
+
 function checkgo {
   PATH=$PATH:/usr/local/go/bin
   if ( ! type "go" > /dev/null 2>&1 )
@@ -29,8 +38,8 @@ function installgo {
   wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
   pushd /tmp
   tar xvzf $GOREL
-  sudo rm -rf /usr/local/go
-  sudo mv /tmp/go /usr/local/go
+  superuser rm -rf /usr/local/go
+  superuser mv /tmp/go /usr/local/go
   popd
   rm -rf /tmp/go
 }
@@ -44,9 +53,9 @@ function installconstellation {
     pushd /tmp
     unxz $constellationrel.tar.xz
     tar -xf $constellationrel.tar
-    sudo cp $constellationrel/constellation-node /usr/local/bin
-    sudo chmod 0755 /usr/local/bin/constellation-node
-    sudo rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
+    superuser cp $constellationrel/constellation-node /usr/local/bin
+    superuser chmod 0755 /usr/local/bin/constellation-node
+    superuser rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
     popd
   fi
 }
@@ -60,15 +69,15 @@ function fixconstellation {
       echo "libsodium.18 already fixed. Skipping"
   elif [ $OS = "20" ]
     then
-      sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-      sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-      sudo cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
-      sudo ldconfig
+      superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+      superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+      superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
+      superuser ldconfig
   elif [ $OS = "18" ]
     then
-      sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-      sudo ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-      sudo ldconfig
+      superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+      superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
+      superuser ldconfig
   else
     echo "OS not supported. Please, perform this process manually and retry."
   fi
@@ -89,8 +98,8 @@ function installquorum {
     cd quorum
     git checkout 9339be03f9119ee488b05cf087d103da7e68f053 #2.6.0
     make all
-    sudo cp build/bin/geth /usr/local/bin
-    sudo cp build/bin/bootnode /usr/local/bin
+    superuser cp build/bin/geth /usr/local/bin
+    superuser cp build/bin/bootnode /usr/local/bin
     popd
     rm -rf /tmp/quorum
   fi
@@ -125,9 +134,9 @@ function installalastria {
 }
 
 function uninstallalastria {
-  sudo rm -rf /usr/local/go 2>/dev/null
-  sudo rm /usr/local/bin/constellation-node 2>/dev/null
-  sudo rm /usr/local/bin/geth 2>/dev/null
+  superuser rm -rf /usr/local/go 2>/dev/null
+  superuser rm /usr/local/bin/constellation-node 2>/dev/null
+  superuser rm /usr/local/bin/geth 2>/dev/null
   rm -rf /tmp/* 2>/dev/null
 }
 
