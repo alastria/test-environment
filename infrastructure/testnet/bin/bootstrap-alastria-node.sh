@@ -73,19 +73,22 @@ function fixconstellation {
       superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
       superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
       superuser ldconfig
+      alreadyfixed="libsodium.so.18"
   elif [ $OS = "18" ]
     then
       superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
       superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
       superuser ldconfig
+      alreadyfixed="libsodium.so.18"
   else
     echo "OS not supported. Please, perform this process manually and retry."
+    exit 4
   fi
   #Checking if fix has worked:
   if [[ $alreadyfixed != "libsodium.so.18" ]]
   then
     echo "WARNING: Not able to fix libsodium install. Please, perform this process manually and retry."
-    exit
+    exit 4
   fi
 }
 
