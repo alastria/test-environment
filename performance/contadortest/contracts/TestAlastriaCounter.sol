@@ -1,4 +1,4 @@
-pragma solidity ^0.4.9;
+pragma solidity >=0.4.9;
 
 
 contract TestAlastriaCounter {
@@ -7,22 +7,22 @@ contract TestAlastriaCounter {
 
     event Change(string message, uint newVal);
 
-    function TestAlastriaCounter(uint initVal) public {
+    constructor(uint initVal) public {
         value = initVal;
-        Change("initialized", initVal);
+        emit Change("initialized", initVal);
     }
 
     function add() public {
         value++;
-        Change("add", value);
+        emit Change("add", value);
     }
 
     function subtract() public {
         value--;
-        Change("substract", value);
+        emit Change("substract", value);
     }
 
-    function get() public constant returns (uint retVal) {
+    function get() public view returns (uint retVal) {
         return value;
     }
 
