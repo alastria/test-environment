@@ -26,7 +26,7 @@ A decision has been made about scripts: considering that the system is installed
 
     In the following screenshot you can see a working configuration. The two main parameters probably will have to change are highlighted (this is an example, you don't have to use the actual parameters you see here):
 
-    [vagrant-local-example.yml](/infrastructure/common/vagrant-example.png?raw=true)
+    ![vagrant-local-example.yml](/infrastructure/common/vagrant-example.png?raw=true)
     
 - **Ubuntu 18**
 
