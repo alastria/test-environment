@@ -22,9 +22,11 @@ A decision has been made about scripts: considering that the system is installed
 
     You must have Virtualbox and Vagrant installed into your machine.
 
-
     If the `vagrant up` command stops shortly after first execution and there is not any error message, just keep executing it. Vagrant is installing its required plugins.
 
+    In the following screenshot you can see a working configuration. The two main parameters probably will have to change are highlighted (this is an example, you don't have to use the actual parameters you see here):
+
+    [vagrant-local-example.yml](/infrastructure/common/vagrant-example.png?raw=true)
     
 - **Ubuntu 18**
 
@@ -32,7 +34,8 @@ A decision has been made about scripts: considering that the system is installed
 
 - **Ubuntu 20**
 
-  - Install necessary packages: `$apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose npm install -g truffle@5.1.48`
+  - Install necessary packages: `$apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose`
+  `npm install -g truffle@5.1.48`
 
   - Clone this project
 
@@ -104,6 +107,7 @@ WIP: porting to Ubuntu 18.04 LTS.
   - Deleted the package installation instructions. The necessary packages are documented or will be installed in the Vagrant provisioner.
   - Hardcoded the paths for the `fixconstellation` function because the libsodium installation is known. If using another OS, please, change the paths accordingly.
   - Changed Quorum version to Consensys 2.6 instead of Alastria 2.2 (this is an upcoming change to Alastria-node environment.
+  - Fixed functions "fixconstellation", "installquorum" and "installgo".
 
 - **infrastructure/testnet/bin/start-node.sh**
 
@@ -128,6 +132,5 @@ WIP: porting to Ubuntu 18.04 LTS.
   - **IMPORTANT**: Consider to lock package versions so there are no issues with that in the future. In the case of a container like docker or a Vagrant installation, the packages should already be installed. This can potentially break the scripts and lead to security and/or performance issues.
 
 - **Other changes and notes**:
-
 
   - The commit used in the provisioner should be the last stable testnet commit. It will already be in place, but double-check that.

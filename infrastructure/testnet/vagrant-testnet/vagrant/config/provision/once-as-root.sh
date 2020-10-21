@@ -4,6 +4,7 @@
 
 timezone=$(echo "$1")
 commit=$(echo "$2")
+ubuntu=$(echo "$3")
 
 #== Bash helpers ==
 
@@ -29,7 +30,12 @@ apt-get update
 # apt-get upgrade -y
 
 info "Installing software..."
-apt-get install -y npm software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose
+if [ ${ubuntu} = 'bento/ubuntu-18.04' ]
+  then
+    apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+fi
+apt-get install -y software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat nodejs docker docker-compose
 npm install -g truffle@5.1.48
 
 info "Cloning and initializing testnet related repositories..."
