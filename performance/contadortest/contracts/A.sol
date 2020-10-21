@@ -1,6 +1,6 @@
 pragma solidity >=0.4.8;
 
-import "contracts/B.sol";
+import "./B.sol";
 
 
 contract A {

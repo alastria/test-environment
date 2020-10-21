@@ -1,4 +1,4 @@
-// b. Cada uno de los hilos tiene la misma cuenta y un único contrato por nodo.
+//b. Cada uno de los hilos tiene la misma cuenta y un único contrato por nodo.
 var fs = require('fs');
 var Counter = artifacts.require("TestAlastriaCounter");
 
@@ -25,23 +25,20 @@ module.exports = function(deployer) {
                 return retorno;
             });
         } else {
-            web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
+            web3.eth.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
             counteri.add().then((err, retorno) => {
                 return add(err, retorno);
             });
         }
     }
 
-    web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
+    web3.eth.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
     Counter.new(0).then(function(instance) {
         if (counteri === null) {
             counteri = instance;
         }
         console.log("Address: " + instance.contract.address);
-        web3.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
+        web3.eth.personal.unlockAccount(web3.eth.accounts[0], "Passw0rd");  
         instance.add().then(add);
     });
-
-
-
 }

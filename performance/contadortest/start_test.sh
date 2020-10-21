@@ -8,7 +8,7 @@ _REPETICIONES="$3"
 _TIME=$(date +%Y%m%d%H%M%S) 
 
 for i in `seq 1 ${_TOTAL}`; do 
-    truffle exec "${_OPERACION}"_Counter.js  --network localhost aqwx "${_REPETICIONES}" >> ~/alastria/logs/contadortest_"${_OPERACION}"_"${_TIME}"_"${i}".log & 
+    truffle exec "${_OPERACION}"_Counter.js  --network localhost aqwx "${_REPETICIONES}" >> logs/contadortest_"${_OPERACION}"_"${_TIME}"_"${i}".log & 
     sleep 5
     # ./contadortest "${_OPERACION}" "${_REPETICIONES}" >> ~/alastria/logs/contadortest_"${_OPERACION}"_"${_TIME}"_"${i}".log & 
 done
