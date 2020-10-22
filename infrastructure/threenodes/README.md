@@ -6,7 +6,7 @@ Además de esto, se suministra un cakeshop y un projecto truffle, ambos configur
 
 ## Bootstraping
 
-Para probar este entorno, necesitas Ubuntu Linux 16.04 o Centos 7 utilizando el [bootstrap.sh](https://github.com/alastria/alastria-node/blob/feature/ibft/scripts/bootstrap.sh) del proyecto alastria/alastria-node.
+Para probar este entorno, necesitas Ubuntu Linux 16.04 o Centos 7 utilizando el [bootstrap.sh](https://github.com/alastria/alastria-node/blob/testnet2/scripts/bootstrap.sh) del proyecto alastria/alastria-node.
 
 ## Puesta en marcha del entorno
 
