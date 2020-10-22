@@ -16,16 +16,20 @@ You can execute multiple tasks provided by the [Makefile](Makefile).
 | `build-alastria`        	| Build the Alastria node image                                                	|
 | `install-test-complete` 	| Execute the Alastria node indicated by it's type, name, and different ports 	|
 | `install-test-basic`    	| Execute the Alastria node indicated by it's type and name                    	|
+| `complete`            	| Execute a netwwork with 2 Validators and 3 regular nodes                   	|
 | `node-shell`            	| Obtain a shell into a running node                                           	|
 | `clean`                   | Remove **all** Alastria docker images                                         |
 | `stop`                    | Stop **all** Alastria running nodes                                           |
 
 For each task you can use different values to customize it:
 
-| **Name** 	| **Description**                                     	| **Used in**                                      	|
-|----------	|-----------------------------------------------------	|--------------------------------------------------	|
-| `TYPE`   	| Type of the node, `main`, `general1` .... Mandatory 	| `install-test-complete` and `install-test-basic` 	|
-| `NAME`   	| Name of the running container. Mandatory            	| `install-test-complete` and `install-test-basic` 	|
+| **Name** 	            | **Description**                                     	| **Used in**                                      	|
+|--------------------	|-----------------------------------------------------	|--------------------------------------------------	|
+| `TYPE`   	            | Type of the node, `main`, `general1` .... Mandatory 	| `install-test-complete` and `install-test-basic` 	|
+| `NAME`   	            | Name of the running container. Mandatory            	| `install-test-complete` and `install-test-basic` 	|
+| `VERSION_UBUNTU`   	| Ubuntu Version to depliy. Mandatory                  	|                       **all**                   	|
+| `VALIDATORS`      	| NUMBER of VALIDATORS                               	|  `complete`                                     	|
+| `REGULARS   `      	| NUMBER of REGULARS                                	|  `complete`                                     	|
 
 For a complete list of customizable port parameters see the [network](#network) section.
 
