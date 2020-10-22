@@ -137,6 +137,7 @@ Verify if /opt/test-environment/infrastructure/testnet/logs/ have new files.
 See the next section if you want to tune the network options.
 
 Running ```make complete``` automatically you will have set up the complete environment. 
+> :warning: **Important** :warning: `VERSION_UBUNTU`,`REGULARS` and `VALIDATORS` are optional. By default they are set to Ubuntu 18, 3 regular nodes and 2 validators. You can change to Ubuntu 20 and 3 regulars and 2 validators are the maximum
 
 ## Network
 List of exposed ports by default:
