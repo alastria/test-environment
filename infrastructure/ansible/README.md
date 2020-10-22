@@ -37,14 +37,14 @@ Once you have the variables set, you can...
 Execute the command from your local machine:
 
 ```bash
-ansible-playbook -i host deploy.yml -vv
+ansible-playbook -i host deploy.yml -vvvv -K
 ```
 
 If you want to do it step by step or only install a specific package (Cakeshop for example), you can
 check the deploy.yml file and use the specific tag of the playbook, for example:
 
 ```bash
-ansible-playbook -i host deploy_regular_node.yml -vv --tags cakeshop
+ansible-playbook -i host deploy.yml -vvvv --tags nodes -K
 ```
 
 ## Etherbase account
@@ -52,14 +52,14 @@ ansible-playbook -i host deploy_regular_node.yml -vv --tags cakeshop
 For some reason the installation asks for an etherbase account, it's known the current system sometimes fails to get it from the machine, but in that case you can:
 
 ```bash
-ansible-playbook -i host deploy_regular_node.yml -vv --tags etherbase
+ansible-playbook -i host deploy.yml -vvvv --tags etherbase -K
 ```
 
 You can get the account hash printed and put it in the `etherbase_account` variable
 in Ansible (group_vars/all.yml). Then you can:
 
 ```bash
-ansible-playbook -i host deploy_regular_node.yml -vv --tags nodes
+ansible-playbook -i host deploy.yml -vvvv --tags nodes -K
 ```
 
 And it will deploy the specific number of nodes specified in the `nodes` variable.

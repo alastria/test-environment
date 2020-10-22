@@ -144,6 +144,13 @@
     - '{{ project_path }}/leveldb/out-shared/libleveldb.so.1'
     - '{{ project_path }}/leveldb/out-shared/libleveldb.so.1.20'
 
+- name: Copy libsodium for constellation
+  become: yes
+  copy:
+    src: '/usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0'
+    dest: '/usr/lib/x86_64-linux-gnu/libsodium.so.18'
+    remote_src: yes
+
 - name: Copy leveldb
   become: yes
   copy:

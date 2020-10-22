@@ -1,6 +1,6 @@
 ---
 
-project_path: '/home/{{ remote_user }}/alastria'
+project_path: '/home/{{ remote_user }}/alastria-node'
 
 eth_netstats_repo: https://github.com/alastria/eth-netstats
 eth_netstats_version: master
@@ -9,13 +9,13 @@ remote_user: ubuntu
 
 alastria_node_repo: https://github.com/alastria/alastria-node.git
 alastria_node_version: testnet2
-etherbase_account: account_hash  # TO BE SET
+etherbase_account: c10498d1f0f1ece4a6778631e7c1dec4571710ff  # TO BE SET
 etherbase_account_pass: account_pass  # TO BE SET
-
+other_nodes: ["http://127.0.0.1:9001/", "http://127.0.0.1:9002/", "http://127.0.0.1:9003/", "http://127.0.0.1:9004/"]
 nodes:
-  - { name: validator, port: 9000, rpc_port: 21000, identity: validator, ip: 127.0.0.1 }
-  - { name: general1, port: 9001, rpc_port: 21001, identity: general1, ip: 127.0.0.1 }
-  - { name: general2, port: 9002, rpc_port: 21002, identity: general2, ip: 127.0.0.1 }
+  - { path: '{{ project_path }}/network/validator',name: validator, constellation_port: 9000, port: 21000, rpc_port: 22000, identity: validator, ip: 127.0.0.1 }
+  - { path: '{{ project_path }}/network/general1',name: general1, constellation_port: 9001, port: 21001, rpc_port: 22001, identity: general1, ip: 127.0.0.1 }
+  - { path: '{{ project_path }}/network/general2',name: general2, constellation_port: 9002, port: 21002, rpc_port: 22002, identity: general2, ip: 127.0.0.1 }
 net_id: 9535753591
 global_args: "--networkid {{ net_id }} --identity {{ item.identity }} --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport {{ item.rpc_port }} --port {{ item.port }} --targetgaslimit 18446744073709551615 --ethstats {{ item.identity }}:bb98a0b6442386d0cdf8a31b267892c1@{{ item.ip }}:3000"
 faulty_global_args: ""

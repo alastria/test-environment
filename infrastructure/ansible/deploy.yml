@@ -1,6 +1,6 @@
 ---
 
-- hosts: test
+- hosts: localhost
   remote_user: ubuntu
   roles:
     - { name: fubarhouse.golang, become: yes }

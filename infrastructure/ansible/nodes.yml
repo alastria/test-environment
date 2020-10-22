@@ -1,8 +1,20 @@
 ---
+#  - name: Clean network 
+#    file: 
+#      path: "{{ project_path }}/network"
+#      state: absent
 
+#  - name: Create folders
+#    file:
+#      path: '{{ project_path  }}/network/{{ item.name }}/constellation'
+#      state: directory
+#      mode: '0755'
+#    with_items: '{{ nodes }}'
+  
+#  - name: Copy identities
+  
   - name: Geth new node
-    command: |
-      nohup env geth --datadir "{{ project_path }}/{{ item.name }}" \
+    shell: 'nohup env geth --datadir "{{ project_path }}/{{ item.name }}" \
         --networkid {{ net_id }} --identity {{ item.identity }} --rpc \
         --rpcaddr 0.0.0.0 \
         --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul \
@@ -11,7 +23,7 @@
         --ethstats {{ item.identity }}:bb98a0b6442386d0cdf8a31b267892c1@{{ item.ip }}:3000
         --etherbase "{{ etherbase_account }}"
         --mine --minerthreads 1 --syncmode full \
-        2>> "{{ project_path }}/logs/quorum_{{ item.name }}_{{ logdatetime }}".log
+        2>> "{{ project_path }}/logs/quorum_{{ item.name }}_{{ logdatetime }}".log &'
     with_items: '{{ nodes }}'
     async: 3600
     poll: 0
@@ -21,16 +33,17 @@
   - name: Check port of the new nodes
     command: netcat -z -v localhost {{ item.port }}
     with_items: '{{ nodes }}'
-
-  # - name: Generate configuration
-  #   template:
-  #     src: config.jinja
-  #     dest: '{{ project_path }}/{{ item.name }}/constellation/constellation.conf'
-  #   with_items: '{{ nodes }}'
-
-  # - name: Constellation node
-  #   command: |
-  #     nohup constellation-node "{{ project_path }}/{{ item.name }}/constellation/constellation.conf" \
-  #       2>> "{{ project_path }}/logs/constellation_{{ item.name }}_{{ logdatetime }}".log &
-  #   with_items: '{{ nodes }}'
-
+    async: 3600
+    poll: 0 
+  
+#  - name: Generate configuration
+#    template:
+#       src: config.jinja
+#       dest: '{{ project_path }}/network/{{ item.name }}/constellation/constellation.conf'
+#    with_items: '{{ nodes }}'
+#
+#  - name: Constellation node
+#    command: |
+#       nohup constellation-node "{{ project_path }}/network/{{ item.name }}/constellation/constellation.conf" \
+#         2>> "{{ project_path }}/logs/constellation_{{ item.name }}_{{ logdatetime }}".log &
+#    with_items: '{{ nodes }}'
