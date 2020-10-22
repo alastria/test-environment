@@ -136,6 +136,8 @@ Verify if /opt/test-environment/infrastructure/testnet/logs/ have new files.
 ```
 See the next section if you want to tune the network options.
 
+Running ```make complete``` automatically you will have set up the complete environment. 
+
 ## Network
 List of exposed ports by default:
 
