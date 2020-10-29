@@ -3,19 +3,21 @@ var fs = require('fs');
 var Counter = artifacts.require("TestAlastriaCounter");
 
 module.exports = async function(deployer) {
-    var testAccount = process.argv[8];
-    const password = process.argv[9];
-    const testMode = process.argv[10];
-    const repetitions = process.argv[7]
+    const repetitions = process.argv[6];
+    var testAccount = process.argv[7];
+    const password = process.argv[8];
+    const testMode = process.argv[9];
     const re = /^0x[0-9A-Fa-f]{40}/g;
 
     if(re.test(testAccount)) {
         console.log("Will try to use the account provided to perform the test: " + testAccount);
-        } else if (Number.isInteger(Number(inputString))){
-            var testAccount = web3.eth.personal.getAccounts().then(account => {get=account[testAccount]});
+        } else if (Number.isInteger(Number(testAccount))){
+            await web3.eth.personal.getAccounts().then(account => {
+                testAccount = account[testAccount]
+            });
             console.log("Will try to use the account provided to perform the test: " + testAccount);
     } else {
-        var testAccount = web3.eth.personal.newAccount(password)
+        var testAccount = await web3.eth.personal.newAccount(password);
         console.log("Created new test account to perform the test with the password provided: " + testAccount);
     }
 
@@ -25,10 +27,19 @@ module.exports = async function(deployer) {
     console.log("Each contract generates " + repetitions + " trx.");
 
     console.log("Init awaitings");
-    await web3.eth.personal.unlockAccount(testAccount, password);
-    console.log("Unlocked Accounts");
-    instance = await depoloyer.deploy(Counter, 0);
-    console.log("Deployer depoloyed");
+        console.log("account: " + testAccount);
+        console.log("password: " + password);
+    await web3.eth.personal.unlockAccount(String(testAccoagrant upunt), String(password));
+    console.log("Unlocked Account");
+    await deployer.deploy(Counter, 0).then( instance => {
+    if (counter_i === null) {
+            counter_i = instance;
+    }
+            console.log("Address: " + instance.contract.address);
+             instance.add().then(add);
+    });
+    console.log("Instance created");
+    web3.eth.personal.lockAccount(testAccount);
     
     // const deployer = await web3.eth.personal.unlockAccount(testAccount, password);
     //     .then(deployer.deploy(Counter, 0))
