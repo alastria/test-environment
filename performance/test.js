@@ -8,6 +8,7 @@ module.exports = async function(deployer) {
     const password = process.argv[8];
     const testMode = process.argv[9];
     const re = /^0x[0-9A-Fa-f]{40}/g;
+    var privateKey = '';
 
     if(re.test(testAccount)) {
         console.log("Will try to use the account provided to perform the test: " + testAccount);
@@ -17,9 +18,28 @@ module.exports = async function(deployer) {
             });
             console.log("Will try to use the account provided to perform the test: " + testAccount);
     } else {
-        var testAccount = await web3.eth.personal.newAccount(password);
+        var privateKey = function(len = 64) {
+            n = Math.floor( Math.random() * (16) ),
+            randomKey = n.toString(16);
+        while ( randomKey.length < len ) {
+            randomKey = randomKey + randHex( len -1 );
+        }
+        return randomKey;
+      };
+        var testAccount = await web3.eth.personal.importRawKey(String(privateKey), String(password));
         console.log("Created new test account to perform the test with the password provided: " + testAccount);
     }
+
+    if(!privateKey) {
+        var keythereum = require("keythereum");
+        var datadir = "/home/vagrant/test-environment/infrastructure/testnet/network/main/keystore";
+        var keyObject = await keythereum.importFromFile(testAccount, datadir);
+        var privateKey = await keythereum.recover(password, keyObject);
+    }
+    console.log("account: " + testAccount);
+    console.log("password: " + password);
+    console.log("privateKey: " + privateKey);
+    process.exit()
 
     eval(fs.readFileSync('logFormat.js')+'');
     var counter = 0;
@@ -29,7 +49,13 @@ module.exports = async function(deployer) {
     console.log("Init awaitings");
         console.log("account: " + testAccount);
         console.log("password: " + password);
-    await web3.eth.personal.unlockAccount(String(testAccoagrant upunt), String(password));
+
+    signedTx = await web3.eth.accounts.signTransaction({
+        
+    }, privateKey, function (err, res){
+
+    });
+    await web3.eth.personal.unlockAccount(String(testAccount), String(password));
     console.log("Unlocked Account");
     await deployer.deploy(Counter, 0).then( instance => {
     if (counter_i === null) {

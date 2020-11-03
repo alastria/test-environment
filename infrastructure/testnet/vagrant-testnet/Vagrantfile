@@ -76,7 +76,7 @@ Vagrant.configure(2) do |config|
   config.vbguest.auto_update = false
 
   # sync: folder '</yoursharedfolder>' (host machine) -> folder '</guestfolder>' (guest machine)
-  config.vm.synced_folder "#{options['projectfolder']}", "/var/www/vhosts/#{options['domain']}.test", owner: 'vagrant', group: 'www-data', mount_options: ['dmode=775', 'fmode=775']
+  config.vm.synced_folder "#{options['projectfolder']}", "/home/vagrant/test-environment", owner: 'vagrant', group: 'www-data', mount_options: ['dmode=775', 'fmode=775']
 
   # sync: vagrant project folder (host machine) -> folder '/app' (guest machine)
   config.vm.synced_folder '.', '/vagrant', owner: 'vagrant', group: 'vagrant'
@@ -106,10 +106,10 @@ Vagrant.configure(2) do |config|
 
   # provisioners
   # !! You have to comment this two lines if you use your own box !!
-  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-root.sh', args: [options['timezone'], options['commit'], options['ubuntu']]
+  config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-root.sh', args: [options['timezone'], options['commit'], options['ubuntu'], options['validator'], options['general'], options['faulty']]
   config.vm.provision 'shell', path: 'vagrant/config/provision/once-as-vagrant.sh', privileged: false
-  # Always need this last script to work 
-  config.vm.provision 'shell', path: 'vagrant/config/provision/always-as-root.sh', run: 'always'
+  # Always need this last script to work
+  config.vm.provision 'shell', path: 'vagrant/config/provision/always-as-root.sh', run: 'always', args: [options['validator'], options['general'], options['faulty']]
 
   # post-install message (vagrant console)
   required_plugins = %w( vagrant-hostmanager vagrant-vbguest vagrant-fsnotify)

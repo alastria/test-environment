@@ -5,6 +5,9 @@
 timezone=$(echo "$1")
 commit=$(echo "$2")
 ubuntu=$(echo "$3")
+validator=$(echo "$4")
+general=$(echo "$5")
+faulty=$(echo "$6")
 
 #== Bash helpers ==
 
@@ -59,5 +62,10 @@ EOF
 echo "$env" > env.sh
 bash build.sh
 bash launch.sh
+
+echo "Initializing testnet with ${validator} validator nodes, ${general} general nodes and ${faulty} nodes."
+cd /home/vagrant/test-environment/infrastructure/testnet
+bash bin/start_network.sh clean ${validator} ${general} --faulty-node ${faulty}
+bash bin/stop_network.sh
 
 info "Finished installing VM"

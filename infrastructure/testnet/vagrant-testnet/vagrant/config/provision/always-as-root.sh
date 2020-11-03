@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+validator=$(echo "$1")
+general=$(echo "$2")
+faulty=$(echo "$3")
+
 #== Bash helpers ==
 
 function info {
