@@ -32,7 +32,6 @@ function installgo {
   echo "Installing Go"
   GOREL="go1.15.2.linux-amd64.tar.gz"
   echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/bash.bashrc
-  echo "export PATH=$PATH:/usr/local/go/bin" >> /root/.bashrc
   echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.bashrc
   echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.profile
   echo "Installing GO"
@@ -47,6 +46,7 @@ function installgo {
 
 function installtessera {
   echo "Installing Tessera"
+  cd /home/vagrant
   git clone https://github.com/ConsenSys/tessera.git
   cd tessera
   git checkout 3c0fa760cd78bed01bf766ff06e85d87248016e7 #Tessera 20.10.0
@@ -73,11 +73,8 @@ function gopath {
 # Manage GOROOT variable
   if [[ -z "$GOROOT" ]]; then
     echo "[*] Trying default GOROOT. If the script fails please run $(pwd)/alastria-node/bootstrap.sh or configure GOROOT correctly"
-    echo 'export GOROOT=/usr/local/go' >> /root/.bashrc
     echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc
-    echo 'export GOPATH=$(pwd)/alastria/workspace' >> /root/.bashrc
     echo 'export GOPATH=$(pwd)/alastria/workspace' >> /etc/bash.bashrc
-    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> /root/.bashrc
     echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> /etc/bash.bashrc
     export GOROOT=/usr/local/go
     export GOPATH=$(pwd)/alastria/workspace

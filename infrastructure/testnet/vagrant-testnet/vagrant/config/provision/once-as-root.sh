@@ -31,8 +31,6 @@ L='es' && sudo sed -i 's/XKBLAYOUT=\"\w*"/XKBLAYOUT=\"'$L'\"/g' /etc/default/key
 # info "Updating OS software..."
 apt-get update
 # apt-get upgrade -y
-echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /root/.bashrc
-exit
 info "Installing software..."
     apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
@@ -40,18 +38,12 @@ apt-get install -y software-properties-common unzip wget git make gcc libsodium-
 npm install -g truffle@5.1.48
 npm install -g keythereum@1.2.0
 mavenver="3.6.3"
-echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /root/.bashrc
-# JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /etc/bash.bashrc
-# export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 wget https://ftp.cixug.es/apache/maven/maven-3/$mavenver/binaries/apache-maven-$mavenver-bin.zip -O /opt/maven.zip
 pushd /opt
 unzip maven.zip && rm maven.zip
 popd
-# PATH=/opt/apache-maven-$mavenver/bin:$PATH
-echo 'export PATH=/opt/apache-maven-$mavenver/bin:$PATH' >> /root/.bashrc
 echo 'export PATH=/opt/apache-maven-$mavenver/bin:$PATH' >> /etc/bash.bashrc
-# export PATH=/opt/apache-maven-$mavenver/bin:$PATH
 
 info "Cloning and initializing testnet related repositories..."
 # cd /home/vagrant
