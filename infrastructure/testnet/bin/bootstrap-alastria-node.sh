@@ -15,7 +15,7 @@ function checkgo {
   then
     installgo
   else
-    GOREL="go1.9.5.linux-amd64.tar.gz"
+    GOREL="go1.15.2.linux-amd64.tar.gz"
     V1=$(go version | grep -oP '\d+(?:\.\d+)+')
     V2=$(echo $GOREL | grep -oP '\d+(?:\.\d+)+')
     nV1=$(echo $V1 | sed 's/\.//g')
@@ -29,7 +29,8 @@ function checkgo {
 }
 
 function installgo {
-  GOREL="go1.9.5.linux-amd64.tar.gz"
+  echo "Installing Go"
+  GOREL="go1.15.2.linux-amd64.tar.gz"
   echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/bash.bashrc
   echo "export PATH=$PATH:/usr/local/go/bin" >> /root/.bashrc
   echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.bashrc
@@ -44,52 +45,12 @@ function installgo {
   rm -rf /tmp/go
 }
 
-function installconstellation {
-  constellationrel="constellation-0.3.2-ubuntu1604"
-  if ( ! type "constellation-node" > /dev/null 2>&1 )
-  then
-    echo "Installing Constellation"
-    wget https://github.com/ConsenSys/constellation/releases/download/v0.3.2/$constellationrel.tar.xz -O /tmp/$constellationrel.tar.xz
-    pushd /tmp
-    unxz $constellationrel.tar.xz
-    tar -xf $constellationrel.tar
-    superuser cp $constellationrel/constellation-node /usr/local/bin
-    superuser chmod 0755 /usr/local/bin/constellation-node
-    superuser rm -rf $constellationrel.tar.xz $constellationrel.tar $constellationrel
-    popd
-  fi
-}
-
-function fixconstellation {
-  #Ubuntu 18 or 20 does not provide the libsodium18 package nor a link for it. So it is neccessary to mock the installation. Libsodium 18 was packed in Ubuntu 16, which is the version of Constellation.
-  alreadyfixed=$([ $(ls /usr/lib/x86_64-linux-gnu/ | grep libsodium.so.18) ] && echo "libsodium.so.18" || echo "NOTFOUND")
-  OS=$(cat /etc/issue | grep -Po "(18|20)")
-  if [ $alreadyfixed = "libsodium.so.18" ]
-    then
-      echo "libsodium.18 already fixed. Skipping"
-  elif [ $OS = "20" ]
-    then
-      superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-      superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-      superuser cp /usr/lib/x86_64-linux-gnu/libleveldb.so.1.22.0 /usr/lib/x86_64-linux-gnu/libleveldb.so.1
-      superuser ldconfig
-      alreadyfixed="libsodium.so.18"
-  elif [ $OS = "18" ]
-    then
-      superuser cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
-      superuser ln -s /usr/lib/x86_64-linux-gnu/libsodium.so.18 /lib64/libsodium.so.18
-      superuser ldconfig
-      alreadyfixed="libsodium.so.18"
-  else
-    echo "OS not supported. Please, perform this process manually and retry."
-    exit 4
-  fi
-  #Checking if fix has worked:
-  if [[ $alreadyfixed != "libsodium.so.18" ]]
-  then
-    echo "WARNING: Not able to fix libsodium install. Please, perform this process manually and retry."
-    exit 4
-  fi
+function installtessera {
+  echo "Installing Tessera"
+  git clone https://github.com/ConsenSys/tessera.git
+  cd tessera
+  git checkout 3c0fa760cd78bed01bf766ff06e85d87248016e7 #Tessera 20.10.0
+  mvn install
 }
 
 function installquorum {
