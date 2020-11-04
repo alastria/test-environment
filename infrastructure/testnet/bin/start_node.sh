@@ -19,8 +19,8 @@ _TIME=$(date +%Y%m%d%H%M%S)
 
 NODE_NAME="$1"
 NETID=9535753591
-mapfile -t IDENTITY <"${PWD}"/network/"$NODE_NAME"/IDENTITY
-mapfile -t NODE_TYPE <"${PWD}"/network/"$NODE_NAME"/NODE_TYPE
+mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
+mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
 NODE_IP="127.0.0.1"
 ETH_STATS_IP="127.0.0.1"
 
@@ -104,22 +104,26 @@ else
 	PUERTO=7
 fi
 
-OTHER_NODES="`cat ${PWD}/identities/CONSTELLATION_NODES`"
+TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
+OTHER_NODES="`cat ${TESTNET_DIR}/identities/CONSTELLATION_NODES`"
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PUERTO --port 2100$PUERTO --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 CONSTELLATION_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
-	nohup env PRIVATE_CONFIG=ignore geth --datadir "${PWD}"/network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
 	# TODO: Add every regular node for the constellation communication
-	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" "${PWD}"/network "${NODE_NAME}" > "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf
+	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/constellation/constellation.conf
 	PWD="$(pwd)"
-	nohup constellation-node "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
+	nohup constellation-node /network/"$NODE_NAME"/constellation/constellation.conf 2>> "${TESTNET_DIR}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
 	check_port $CONSTELLATION_PORT
-	nohup env PRIVATE_CONFIG=ignore geth --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
-	# nohup env PRIVATE_CONFIG="${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
-echo "Verify if ${PWD}/logs/ have new files."
+echo "Verify if ${TESTNET_DIR}/logs/ have new files."
 
 set +u
 set +e
+
+# TODO: Esto funciona en consola: sudo env PRIVATE_CONFIG=ignore geth --datadir network/main/ --networkid 9535753591 --identity network/main/IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 22000 --port 21000 --targetgaslimit 18446744073709551615
+
+# TODO: start geth with --nousb option, as it erorrs a lot "Failed to enumerate USB devices". This does not impact in the initialization, however.

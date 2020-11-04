@@ -50,16 +50,16 @@ start_validators () {
         ./bin/start_node.sh main
         start_faulty_validator
         sleep 15
-        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
+        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
         ./bin/start_node.sh main
         start_faulty_validator
         sleep 15
-        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach network/main/geth.ipc
+        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
         ./bin/start_node.sh validator2
         sleep 15
-        geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach network/main/geth.ipc
-        geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach network/validator1/geth.ipc
+        geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach /network/main/geth.ipc
+        geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach /network/validator1/geth.ipc
     else
         echo "[!!] Number of validators not supported. Please contact @arochaga or any Alastria member for support"
         exit

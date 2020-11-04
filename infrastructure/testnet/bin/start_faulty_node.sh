@@ -20,8 +20,8 @@ _TIME=$(date +%Y%m%d%H%M%S)
 FAULTY_MODE="1"
 NODE_NAME="$1"
 NETID=9535753591
-mapfile -t IDENTITY <"${PWD}"/network/"$NODE_NAME"/IDENTITY
-mapfile -t NODE_TYPE <"${PWD}"/network/"$NODE_NAME"/NODE_TYPE
+mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
+mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
 NODE_IP="127.0.0.1"
 ETH_STATS_IP="127.0.0.1"
 
@@ -110,14 +110,14 @@ GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --r
 FAULTY_ARGS="--istanbul.faultymode $2 "
 CONSTELLATION_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
-	nohup ./geth_faulty --datadir "${PWD}"/network/"$NODE_NAME" $GLOBAL_ARGS $FAULTY_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup ./geth_faulty --datadir /network/"$NODE_NAME" $GLOBAL_ARGS $FAULTY_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
 	# TODO: Add every regular node for the constellation communication
-	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" "${PWD}"/network "${NODE_NAME}" > "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf
+	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/constellation/constellation.conf
 	PWD="$(pwd)"
-	nohup constellation-node "${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
+	nohup constellation-node /network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
 	check_port $CONSTELLATION_PORT
-	nohup env PRIVATE_CONFIG="${PWD}"/network/"$NODE_NAME"/constellation/constellation.conf ./geth_faulty --datadir "${PWD}"/network/"$NODE_NAME" --debug $GLOBAL_ARGS $FAULTY_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/constellation/constellation.conf ./geth_faulty --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS $FAULTY_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
 echo "Verify if ${PWD}/logs/ have new files."

@@ -33,14 +33,12 @@ info "Installing software..."
     apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 apt-get install -y software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat docker docker-compose nodejs
-npm install -g truffle@5.1.48 
+npm install -g keythereum@1.2.0
 
 info "Cloning and initializing testnet related repositories..."
-cd /home/vagrant
-git clone https://github.com/alastria/test-environment.git
-cd test-environment
-git checkout ${commit}
-cd infrastructure/testnet
+# git checkout ${commit}
+cp /home/vagrant/test-environment/infrastructure/testnet/network /
+cd /home/vagrant/test-environment/infrastructure/testnet
 bash bin/bootstrap.sh
 cd /home/vagrant
 git clone https://github.com/Councilbox/cbx-quorum-explorer.git
