@@ -43,25 +43,25 @@ info "Cloning and initializing testnet related repositories..."
 cp /home/vagrant/test-environment/infrastructure/testnet/network /
 cd /home/vagrant/test-environment/infrastructure/testnet
 bash bin/bootstrap.sh
-cd /home/vagrant
-git clone https://github.com/Councilbox/cbx-quorum-explorer.git
-cd cbx-quorum-explorer
-mkdir mongo_data_dir
-bash -c "curl https://raw.githubusercontent.com/alastria/test-environment/feature/tidyup-testnet/infrastructure/common/docker-compose.yaml.template > docker-compose.yaml.template"
-read -r -d '' env << EOF
-QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
-QUORUM_HOST=localhost
-ENABLE_SSL=false
-EXPLORER_PORT=8888
-API_DOMAIN=localhost
-MONGO_DATA_DIR=/home/vagrant/cbx-quorum-explorer/mongo_data_dir
-API_PORT=
-EXTERNAL_API_PORT=
-WEBAPP_VERSION=alastria-telsius
-EOF
-echo "$env" > env.sh
-bash build.sh
-bash launch.sh
+# cd /home/vagrant
+# git clone https://github.com/Councilbox/cbx-quorum-explorer.git
+# cd cbx-quorum-explorer
+# mkdir mongo_data_dir
+# bash -c "curl https://raw.githubusercontent.com/alastria/test-environment/feature/tidyup-testnet/infrastructure/common/docker-compose.yaml.template > docker-compose.yaml.template"
+# read -r -d '' env << EOF
+# QUORUM_ENDPOINTS=localhost:22000,localhost:22001,localhost:22002,localhost:22003,localhost:22005
+# QUORUM_HOST=localhost
+# ENABLE_SSL=false
+# EXPLORER_PORT=8888
+# API_DOMAIN=localhost
+# MONGO_DATA_DIR=/home/vagrant/cbx-quorum-explorer/mongo_data_dir
+# API_PORT=
+# EXTERNAL_API_PORT=
+# WEBAPP_VERSION=alastria-telsius
+# EOF
+# echo "$env" > env.sh
+# bash build.sh
+# bash launch.sh
 
 echo "Initializing testnet with ${validator} validator nodes, ${general} general nodes and ${faulty} nodes."
 cd /home/vagrant/test-environment/infrastructure/testnet

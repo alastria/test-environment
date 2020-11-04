@@ -27,7 +27,7 @@ block_explorer: 8888
 block_explorer_api: 8080
 
 # Project folder
-projectfolder: "."
+projectfolder: "../../../"
 
 # Domain name
 domain: testnet
