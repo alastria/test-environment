@@ -61,7 +61,7 @@ storage = "$PWD/$NODE_NAME/constellation/data"
 #   - 1: Warnings
 #   - 2: Informational messages
 #   - 3: Debug messages
-verbosity = 2
+verbosity = 3
 EOF
 }
 
