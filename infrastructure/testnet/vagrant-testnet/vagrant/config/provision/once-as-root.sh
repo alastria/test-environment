@@ -52,7 +52,7 @@ info "Cloning and initializing testnet related repositories..."
 # git clone https://github.com/alastria/test-environment.git
 # cd test-environment
 # git checkout ${commit}
-cp -R /home/vagrant/test-environment/infrastructure/testnet/network /
+# cp -R /home/vagrant/test-environment/infrastructure/testnet/network / #TODO: probando que esto no es necesario ya que el clean la crea cada vez...
 cd /home/vagrant/test-environment/infrastructure/testnet
 bash bin/bootstrap.sh
 cd /home/vagrant

@@ -34,7 +34,8 @@ generate_conf() {
    PWD="$4"
    NODE_NAME="$5"
 
-   #define the template.
+   #define the template
+   # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
    #JavaDataBaseConnection:
 #    "jdbc": {
 # 			"username": "scott",
@@ -44,57 +45,41 @@ generate_conf() {
    cat  << EOF
 
 	{
-		"useWhiteList": false,
-		"serverConfigs": [
+		{
+		"app": "Q2T",
+		"enabled": true,
+		"serverAddress": "unix:$PWD/$NODE_NAME/tessera/c.ipc",
+		"bindingAddress": "http://$NODE_IP:$TESSERA_PORT/"
+		"communicationType" : "REST" #! ???
+		}
+		"peer": [#TODO: un método para poder configurar el número de "peers" según lo que se escriba al poner el start_network. Se leerían del mismo archivo, en principio.
 			{
-				"app": "P2P",
-				"enabled": true,
-				"serverAddress": "http://localhost:8091",
-				"sslConfig": {
-					"tls": "OFF",
-					"generateKeyStoreIfNotExisted": "false",
-					"serverKeyStore": "./ssl/server1-keystore",
-					"serverKeyStorePassword": "quorum",
-					"serverTrustStore": "./ssl/server-truststore",
-					"serverTrustStorePassword": "quorum",
-					"serverTrustMode": "CA",
-					"clientKeyStore": "./ssl/client1-keystore",
-					"clientKeyStorePassword": "quorum",
-					"clientTrustStore": "./ssl/client-truststore",
-					"clientTrustStorePassword": "quorum",
-					"clientTrustMode": "CA",
-					"knownClientsFile": "./ssl/knownClients1",
-					"knownServersFile": "./ssl/knownServers1"
-				},
-				"communicationType": "REST"
-			}
-		],
-		"peer": [
-			{
-				"url": "http://bogus1.com"
+				"url": "http://myhost.com:9000"
 			},
 			{
-				"url": "http://bogus2.com"
+				"url": "http://myhost.com:9001"
+			},
+			{
+				"url": "http://myhost.com:9002"
 			}
-		],
+		]
+		"disablePeerDiscovery": true #! Quizá dejarlo así. De esta manera solo vería los que hay configurados arriba.
 		"keys": {
-			"passwords": [],
+			"passwordFile": "$PWD/$NODE_NAME/passwords.txt",
+			"keyVaultConfigs": [
+				{
+					"keyVaultType": "Enumeration: AZURE, HASHICORP, AWS",#! Esto hay que comfigurarlo
+					"properties": "Map[string]string"#! Y esto también
+				}
+			],
 			"keyData": [
 				{
-					"config": {
-						"data": {
-							"bytes": "Wl+xSyXVuuqzpvznOS7dOobhcn4C5auxkFRi7yLtgtA="
-						},
-						"type": "unlocked"
-					},
-					"publicKey": "/+UuD63zItL1EbjxkKUljMgG8Z1w0AJ8pNOR4iq2yQc="
+					"publicKey": "$PWD/$NODE_NAME/tessera/keystore/node.pub" #! OJO: comprobar que efectivamente puede leer las claves.
+					"privatekey"= "$PWD/$NODE_NAME/tessera/keystore/node.key"
+					// The data for a private/public key pair
 				}
 			]
-		},
-		"alwaysSendTo": [
-			"/+UuD63zItL1EbjxkKUljMgG8Z1w0AJ8pNOR4iq2yQc="
-		],
-		"unixSocketFile": "${unixSocketPath}"
+		}
 	}
 
 
@@ -108,8 +93,15 @@ generate_conf() {
 
 
 
-
-
+Qué es lo que manejaba Constellation en su config:
+- #** URL externa del nodo 
+- Puerto de la API pública 
+- #** Socket (.ipc)
+- #** Bootnodes (lista de ip:puerto en un archivo externo)
+- #** Pub key en la carpeta keystore
+- #** Priv key en el mismo sitio que la pub
+- #** Contraseñas para hacer el unlock (que ya no se pueden usar)
+- Storage (carpeta data)
 
 
 
