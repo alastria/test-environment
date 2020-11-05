@@ -35,7 +35,7 @@ function installgo {
   echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.bashrc
   echo "export PATH=$PATH:/usr/local/go/bin" >> /home/vagrant/.profile
   echo "Installing GO"
-  wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL
+  wget "https://storage.googleapis.com/golang/$GOREL" -O /tmp/$GOREL --progress=bar:force
   pushd /tmp
   tar xvzf $GOREL
   superuser rm -rf /usr/local/go
@@ -46,11 +46,16 @@ function installgo {
 
 function installtessera {
   echo "Installing Tessera"
-  cd /home/vagrant
+  mavenver="3.6.3"
+  PATH=/opt/apache-maven-$mavenver/bin:$PATH
+  echo "export PATH=/opt/apache-maven-$mavenver/bin:$PATH" >> /home/vagrant/.bashrc
+  echo "export PATH=/opt/apache-maven-$mavenver/bin:$PATH" >> /home/vagrant/.profile
+  pushd /home/vagrant
   git clone https://github.com/ConsenSys/tessera.git
   cd tessera
   git checkout 3c0fa760cd78bed01bf766ff06e85d87248016e7 #Tessera 20.10.0
-  mvn install
+  mvn install -DskipTests
+  popd
 }
 
 function installquorum {
@@ -87,8 +92,7 @@ function gopath {
 function installalastria {
   set -e
   checkgo
-  installconstellation
-  fixconstellation
+  installtessera
   installquorum
   gopath
   set +e

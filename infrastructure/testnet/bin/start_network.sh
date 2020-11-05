@@ -69,7 +69,7 @@ start_validators () {
 start_gws () {
     GW_NUM=$1
     echo "[*] Starting gw nodes"
-
+    alias tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
     if [ "$GW_NUM" -eq "1" ]; then
         ./bin/start_node.sh general1
     elif [ "$GW_NUM" -eq "2" ]; then

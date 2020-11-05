@@ -30,7 +30,7 @@ echo "[*] Starting $NODE_NAME"
 generate_conf() {
    #define parameters which are passed in.
    NODE_IP="$1"
-   CONSTELLATION_PORT="$2"
+   TESSERA_PORT="$2"
    OTHER_NODES="$3"
    PWD="$4"
    NODE_NAME="$5"
@@ -38,25 +38,25 @@ generate_conf() {
    #define the template.
    cat  << EOF
 # Externally accessible URL for this node (this is what's advertised)
-url = "http://$NODE_IP:$CONSTELLATION_PORT/"
+url = "http://$NODE_IP:$TESSERA_PORT/"
 # Port to listen on for the public API
-port = $CONSTELLATION_PORT
+port = $TESSERA_PORT
 # Socket file to use for the private API / IPC
-socket = "$PWD/$NODE_NAME/constellation/c.ipc"
+socket = "$PWD/$NODE_NAME/tessera/c.ipc"
 # Initial (not necessarily complete) list of other nodes in the network.
-# Constellation will automatically connect to other nodes not in this list
+# Tessera will automatically connect to other nodes not in this list
 # that are advertised by the nodes below, thus these can be considered the
 # "boot nodes."
 othernodes = [$OTHER_NODES]
 # The set of public keys this node will host
-publickeys = ["$PWD/$NODE_NAME/constellation/keystore/node.pub"]
+publickeys = ["$PWD/$NODE_NAME/tessera/keystore/node.pub"]
 # The corresponding set of private keys
-privatekeys = ["$PWD/$NODE_NAME/constellation/keystore/node.key"]
+privatekeys = ["$PWD/$NODE_NAME/tessera/keystore/node.key"]
 # Optional file containing the passwords to unlock the given privatekeys
 # (one password per line -- add an empty line if one key isn't locked.)
 passwords = "$PWD/$NODE_NAME/passwords.txt"
 # Where to store payloads and related information
-storage = "$PWD/$NODE_NAME/constellation/data"
+storage = "$PWD/$NODE_NAME/tessera/data"
 # Verbosity level (each level includes all prior levels)
 #   - 0: Only fatal errors
 #   - 1: Warnings
@@ -77,7 +77,7 @@ check_port() {
 	do
 		netcat -z -v localhost $PORT_TO_TEST
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && echo "[*] constellation node at $PORT_TO_TEST is now up."
+		[ $RETVAL -eq 0 ] && echo "[*] tessera node at $PORT_TO_TEST is now up."
 		[ $RETVAL -ne 0 ] && sleep 1
 		
 	done
@@ -105,19 +105,19 @@ else
 	PUERTO=7
 fi
 
-OTHER_NODES="`cat ${PWD}/identities/CONSTELLATION_NODES`"
+OTHER_NODES="`cat ${PWD}/identities/TESSERA_NODES`"
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PUERTO --port 2100$PUERTO --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 FAULTY_ARGS="--istanbul.faultymode $2 "
-CONSTELLATION_PORT="900$PUERTO"
+TESSERA_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup ./geth_faulty --datadir /network/"$NODE_NAME" $GLOBAL_ARGS $FAULTY_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
-	# TODO: Add every regular node for the constellation communication
-	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/constellation/constellation.conf
+	# TODO: Add every regular node for the tessera communication
+	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.conf
 	PWD="$(pwd)"
-	nohup constellation-node /network/"$NODE_NAME"/constellation/constellation.conf 2>> "${PWD}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
-	check_port $CONSTELLATION_PORT
-	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/constellation/constellation.conf ./geth_faulty --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS $FAULTY_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup #TODO: tessera command (using the alias from start_network) tessera-node /network/"$NODE_NAME"/tessera/tessera.conf 2>> "${PWD}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
+	check_port $TESSERA_PORT
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.conf ./geth_faulty --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS $FAULTY_ARGS 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
 echo "Verify if ${PWD}/logs/ have new files."

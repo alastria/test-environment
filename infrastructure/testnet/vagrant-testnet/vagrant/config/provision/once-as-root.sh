@@ -39,18 +39,20 @@ npm install -g truffle@5.1.48
 npm install -g keythereum@1.2.0
 mavenver="3.6.3"
 echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /etc/bash.bashrc
-wget https://ftp.cixug.es/apache/maven/maven-3/$mavenver/binaries/apache-maven-$mavenver-bin.zip -O /opt/maven.zip
+wget "https://ftp.cixug.es/apache/maven/maven-3/$mavenver/binaries/apache-maven-$mavenver-bin.zip" -O /opt/maven.zip --progress=bar:force
 pushd /opt
 unzip maven.zip && rm maven.zip
 popd
-echo 'export PATH=/opt/apache-maven-$mavenver/bin:$PATH' >> /etc/bash.bashrc
+PATH=/opt/apache-maven-$mavenver/bin:$PATH
+echo "export PATH=/opt/apache-maven-$mavenver/bin:$PATH" >> /home/vagrant/.bashrc
+echo "export PATH=/opt/apache-maven-$mavenver/bin:$PATH" >> /home/vagrant/.profile
 
 info "Cloning and initializing testnet related repositories..."
 # cd /home/vagrant
 # git clone https://github.com/alastria/test-environment.git
 # cd test-environment
 # git checkout ${commit}
-cp /home/vagrant/test-environment/infrastructure/testnet/network /
+cp -R /home/vagrant/test-environment/infrastructure/testnet/network /
 cd /home/vagrant/test-environment/infrastructure/testnet
 bash bin/bootstrap.sh
 cd /home/vagrant

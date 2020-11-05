@@ -29,39 +29,116 @@ echo "[*] Starting $NODE_NAME"
 generate_conf() {
    #define parameters which are passed in.
    NODE_IP="$1"
-   CONSTELLATION_PORT="$2"
+   TESSERA_PORT="$2"
    OTHER_NODES="$3"
    PWD="$4"
    NODE_NAME="$5"
 
    #define the template.
+   #JavaDataBaseConnection:
+#    "jdbc": {
+# 			"username": "scott",
+# 			"password": "tiger",
+# 			"url": "foo:bar"
+# 		},
    cat  << EOF
+
+	{
+		"useWhiteList": false,
+		"serverConfigs": [
+			{
+				"app": "P2P",
+				"enabled": true,
+				"serverAddress": "http://localhost:8091",
+				"sslConfig": {
+					"tls": "OFF",
+					"generateKeyStoreIfNotExisted": "false",
+					"serverKeyStore": "./ssl/server1-keystore",
+					"serverKeyStorePassword": "quorum",
+					"serverTrustStore": "./ssl/server-truststore",
+					"serverTrustStorePassword": "quorum",
+					"serverTrustMode": "CA",
+					"clientKeyStore": "./ssl/client1-keystore",
+					"clientKeyStorePassword": "quorum",
+					"clientTrustStore": "./ssl/client-truststore",
+					"clientTrustStorePassword": "quorum",
+					"clientTrustMode": "CA",
+					"knownClientsFile": "./ssl/knownClients1",
+					"knownServersFile": "./ssl/knownServers1"
+				},
+				"communicationType": "REST"
+			}
+		],
+		"peer": [
+			{
+				"url": "http://bogus1.com"
+			},
+			{
+				"url": "http://bogus2.com"
+			}
+		],
+		"keys": {
+			"passwords": [],
+			"keyData": [
+				{
+					"config": {
+						"data": {
+							"bytes": "Wl+xSyXVuuqzpvznOS7dOobhcn4C5auxkFRi7yLtgtA="
+						},
+						"type": "unlocked"
+					},
+					"publicKey": "/+UuD63zItL1EbjxkKUljMgG8Z1w0AJ8pNOR4iq2yQc="
+				}
+			]
+		},
+		"alwaysSendTo": [
+			"/+UuD63zItL1EbjxkKUljMgG8Z1w0AJ8pNOR4iq2yQc="
+		],
+		"unixSocketFile": "${unixSocketPath}"
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Externally accessible URL for this node (this is what's advertised)
-url = "http://$NODE_IP:$CONSTELLATION_PORT/"
+url = "http://$NODE_IP:$TESSERA_PORT/"
 # Port to listen on for the public API
-port = $CONSTELLATION_PORT
+port = $TESSERA_PORT
 # Socket file to use for the private API / IPC
-socket = "$PWD/$NODE_NAME/constellation/c.ipc"
+socket = "$PWD/$NODE_NAME/tessera/c.ipc"
 # Initial (not necessarily complete) list of other nodes in the network.
-# Constellation will automatically connect to other nodes not in this list
+# Tessera will automatically connect to other nodes not in this list
 # that are advertised by the nodes below, thus these can be considered the
 # "boot nodes."
 othernodes = [$OTHER_NODES]
 # The set of public keys this node will host
-publickeys = ["$PWD/$NODE_NAME/constellation/keystore/node.pub"]
+publickeys = ["$PWD/$NODE_NAME/tessera/keystore/node.pub"]
 # The corresponding set of private keys
-privatekeys = ["$PWD/$NODE_NAME/constellation/keystore/node.key"]
+privatekeys = ["$PWD/$NODE_NAME/tessera/keystore/node.key"]
 # Optional file containing the passwords to unlock the given privatekeys
 # (one password per line -- add an empty line if one key isn't locked.)
 passwords = "$PWD/$NODE_NAME/passwords.txt"
 # Where to store payloads and related information
-storage = "$PWD/$NODE_NAME/constellation/data"
+storage = "$PWD/$NODE_NAME/tessera/data"
 # Verbosity level (each level includes all prior levels)
 #   - 0: Only fatal errors
 #   - 1: Warnings
 #   - 2: Informational messages
 #   - 3: Debug messages
-verbosity = 3
+verbosity = 2
 EOF
 }
 
@@ -76,7 +153,7 @@ check_port() {
 	do
 		netcat -z -v localhost $PORT_TO_TEST
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && echo "[*] constellation node at $PORT_TO_TEST is now up."
+		[ $RETVAL -eq 0 ] && echo "[*] tessera node at $PORT_TO_TEST is now up."
 		[ $RETVAL -ne 0 ] && sleep 1
 		
 	done
@@ -105,18 +182,18 @@ else
 fi
 
 TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
-OTHER_NODES="`cat ${TESTNET_DIR}/identities/CONSTELLATION_NODES`"
+OTHER_NODES="`cat ${TESTNET_DIR}/identities/TESSERA_NODES`"
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PUERTO --port 2100$PUERTO --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
-CONSTELLATION_PORT="900$PUERTO"
+TESSERA_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
-	# TODO: Add every regular node for the constellation communication
-	generate_conf "${NODE_IP}" "${CONSTELLATION_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/constellation/constellation.conf
+	# TODO: Add every regular node for the tessera communication
+	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
 	PWD="$(pwd)"
-	nohup constellation-node /network/"$NODE_NAME"/constellation/constellation.conf 2>> "${TESTNET_DIR}"/logs/constellation_"$NODE_NAME"_"${_TIME}".log &
-	check_port $CONSTELLATION_PORT
-	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/constellation/constellation.conf geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup #TODO: tessera command (using the alias from start_network) tessera-node /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
+	check_port $TESSERA_PORT
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
 echo "Verify if ${TESTNET_DIR}/logs/ have new files."
