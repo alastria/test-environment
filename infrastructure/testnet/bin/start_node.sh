@@ -19,8 +19,8 @@ _TIME=$(date +%Y%m%d%H%M%S)
 NODE_NAME="$1"
 PEER_NUMBER="$2"
 NETID=9535753591
-# mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
-# mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
+mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
+mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
 NODE_IP="127.0.0.1"
 ETH_STATS_IP="127.0.0.1"
 
@@ -30,111 +30,62 @@ generate_conf() {
    #define parameters which are passed in.
    NODE_IP="$1"
    TESSERA_PORT="$2"
-   OTHER_NODES="$3"
+   PEER_NUMBER="$3"
    PWD="$4"
    NODE_NAME="$5"
-   PEER_NUMBER="$6"
 
    #define the template
    # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
-   #JavaDataBaseConnection:
-#    "jdbc": {
-# 			"username": "scott",
-# 			"password": "tiger",
-# 			"url": "foo:bar"
-# 		},
-   cat  << EOF
-
+   cat << EOF
 	{
-		{
-		"app": "Q2T",
-		"enabled": true,
-		"serverAddress": "unix:$PWD/$NODE_NAME/tessera/c.ipc",
-		"bindingAddress": "http://$NODE_IP:$TESSERA_PORT/"
-		"communicationType" : "REST" #! ???
-		}
+		"serverConfigs": [
+			{
+			"app": "Q2T",
+			"enabled": true,
+			"serverAddress": "unix:$PWD/$NODE_NAME/tessera/c.ipc",
+			"bindingAddress": "http://$NODE_IP:$TESSERA_PORT/",
+			"communicationType" : "REST"
+			}
+		],
 		"peer": [
 EOF
-for (( port=1; port<=$PEER_NUMBER; port++ ))
-do
-cat  << EOF
+	for (( port=1; port<$PEER_NUMBER; port++ ))
+	do
+	cat  << EOF
 			{
 				"url": "http://127.0.0.1:900$port"
 			},
 EOF
-done
-cat  << EOF
-		]
-		"disablePeerDiscovery": true #! Quizá dejarlo así. De esta manera solo vería los que hay configurados arriba.
+	done
+	cat  << EOF
+			{
+				"url": "http://127.0.0.1:900$PEER_NUMBER"
+			}
+		],
+		"disablePeerDiscovery": true,
 		"keys": {
 			"passwordFile": "$PWD/$NODE_NAME/passwords.txt",
-			"keyVaultConfigs": [
-				{
-					"keyVaultType": "Enumeration: AZURE, HASHICORP, AWS",#! Esto hay que comfigurarlo
-					"properties": "Map[string]string"#! Y esto también
-				}
-			],
 			"keyData": [
 				{
-					"publicKey": "$PWD/$NODE_NAME/tessera/keystore/node.pub" #! OJO: comprobar que efectivamente puede leer las claves.
-					"privatekey"= "$PWD/$NODE_NAME/tessera/keystore/node.key"
-					// The data for a private/public key pair
+					"privateKeyPath": "$PWD/$NODE_NAME/tessera/keystore/node.key",
+					"publicKeyPath": "$PWD/$NODE_NAME/tessera/keystore/node.pub"
 				}
 			]
-		}
-	}
+		
 
-
-
-
-
-
-
-
-
-
-
-
-Qué es lo que manejaba Constellation en su config:
-- #** URL externa del nodo 
-- Puerto de la API pública 
-- #** Socket (.ipc)
-- #** Bootnodes (lista de ip:puerto en un archivo externo)
-- #** Pub key en la carpeta keystore
-- #** Priv key en el mismo sitio que la pub
-- #** Contraseñas para hacer el unlock (que ya no se pueden usar)
-- Storage (carpeta data)
-
-
-
-# Externally accessible URL for this node (this is what's advertised)
-url = "http://$NODE_IP:$TESSERA_PORT/"
-# Port to listen on for the public API
-port = $TESSERA_PORT
-# Socket file to use for the private API / IPC
-socket = "$PWD/$NODE_NAME/tessera/c.ipc"
-# Initial (not necessarily complete) list of other nodes in the network.
-# Tessera will automatically connect to other nodes not in this list
-# that are advertised by the nodes below, thus these can be considered the
-# "boot nodes."
-othernodes = [$OTHER_NODES]
-# The set of public keys this node will host
-publickeys = ["$PWD/$NODE_NAME/tessera/keystore/node.pub"]
-# The corresponding set of private keys
-privatekeys = ["$PWD/$NODE_NAME/tessera/keystore/node.key"]
-# Optional file containing the passwords to unlock the given privatekeys
-# (one password per line -- add an empty line if one key isn't locked.)
-passwords = "$PWD/$NODE_NAME/passwords.txt"
-# Where to store payloads and related information
-storage = "$PWD/$NODE_NAME/tessera/data"
-# Verbosity level (each level includes all prior levels)
-#   - 0: Only fatal errors
-#   - 1: Warnings
-#   - 2: Informational messages
-#   - 3: Debug messages
-verbosity = 2
-EOF
 }
+}
+EOF
+#       },
+# 		"jdbc": {
+# 			"username": "sa",
+# 			"password": "ENC(ujMeokIQ9UFHSuBYetfRjQTpZASgaua3)",
+# 			"url": "jdbc:mysql:/qdata/c1/db1",
+# 			"autoCreateTables": true
+# 		}
+# 	}
+# EOF
+	}
 
 check_port() {
 	PORT_TO_TEST="$1"
@@ -168,24 +119,16 @@ else
 	PORT=7
 fi
 
-TESSERA_PORT="900$PORT"
+tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
 TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
-OTHER_NODES="`cat ${TESTNET_DIR}/identities/TESSERA_NODES`"
-generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" "${PEER_NUMBER}" > /network/"$NODE_NAME"/tessera/tessera.json
-	exit
-
-
-TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
-OTHER_NODES="`cat ${TESTNET_DIR}/identities/TESSERA_NODES`"
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 TESSERA_PORT="900$PORT"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
-	# TODO: Add every regular node for the tessera communication
-	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" "${PEER_NUMBER}" > /network/"$NODE_NAME"/tessera/tessera.json
+	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "${PEER_NUMBER}" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
 	PWD="$(pwd)"
-	nohup #TODO: tessera command (using the alias from start_network) tessera-node /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
+	nohup $tessera --configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
 	check_port $TESSERA_PORT
 	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi

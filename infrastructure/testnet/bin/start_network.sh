@@ -69,8 +69,6 @@ start_validators () {
 start_gws () {
     GW_NUM=$1
     echo "[*] Starting gw nodes"
-    alias tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
-
     if [ "$GW_NUM" -gt "4" ]; then
         echo "[!!] Number of validators not supported. Please contact @arochaga or any Alastria member for support"
         exit
@@ -81,7 +79,7 @@ start_gws () {
     done
 }
 
-# start_validators $2 #$4 $5
+start_validators $2 #$4 $5
 start_gws $3
 
 set +u
