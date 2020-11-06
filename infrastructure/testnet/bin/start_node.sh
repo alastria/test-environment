@@ -7,8 +7,7 @@ echo "[!!] Excecute from alastria test-environment/infrastructure/testnet/"
 MESSAGE='Usage: start_node <node_name>
     node_name: general1-n | main/validator1-n'
 
-
-if ( [ $# -ne 1 ] ); then
+if ( [ $# -ne 2 ] ); then
     echo "$MESSAGE"
     exit
 fi
@@ -18,9 +17,10 @@ PWD="$(pwd)"
 _TIME=$(date +%Y%m%d%H%M%S)
 
 NODE_NAME="$1"
+PEER_NUMBER="$2"
 NETID=9535753591
-mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
-mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
+# mapfile -t IDENTITY </network/"$NODE_NAME"/IDENTITY
+# mapfile -t NODE_TYPE </network/"$NODE_NAME"/NODE_TYPE
 NODE_IP="127.0.0.1"
 ETH_STATS_IP="127.0.0.1"
 
@@ -33,6 +33,7 @@ generate_conf() {
    OTHER_NODES="$3"
    PWD="$4"
    NODE_NAME="$5"
+   PEER_NUMBER="$6"
 
    #define the template
    # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
@@ -52,16 +53,17 @@ generate_conf() {
 		"bindingAddress": "http://$NODE_IP:$TESSERA_PORT/"
 		"communicationType" : "REST" #! ???
 		}
-		"peer": [#TODO: un método para poder configurar el número de "peers" según lo que se escriba al poner el start_network. Se leerían del mismo archivo, en principio.
+		"peer": [
+EOF
+for (( port=1; port<=$PEER_NUMBER; port++ ))
+do
+cat  << EOF
 			{
-				"url": "http://myhost.com:9000"
+				"url": "http://127.0.0.1:900$port"
 			},
-			{
-				"url": "http://myhost.com:9001"
-			},
-			{
-				"url": "http://myhost.com:9002"
-			}
+EOF
+done
+cat  << EOF
 		]
 		"disablePeerDiscovery": true #! Quizá dejarlo así. De esta manera solo vería los que hay configurados arriba.
 		"keys": {
@@ -154,34 +156,34 @@ check_port() {
 	set -e	
 }
 
-PUERTO=0
 if [[ "$NODE_NAME" == "main" ]]; then
-	PUERTO=0
-elif [[ "$NODE_NAME" == "general1" ]]; then
-	PUERTO=1
-elif [[ "$NODE_NAME" == "general2" ]]; then
-	PUERTO=2
-elif [[ "$NODE_NAME" == "general3" ]]; then
-	PUERTO=3
-elif [[ "$NODE_NAME" == "general4" ]]; then
-	PUERTO=4
+	PORT=0
 elif [[ "$NODE_NAME" == "validator1" ]]; then
-	PUERTO=5
+	PORT=5
 elif [[ "$NODE_NAME" == "validator2" ]]; then
-	PUERTO=6
+	PORT=6
+elif [[ "${NODE_NAME:0:7}" == "general" ]]; then
+	PORT=${NODE_NAME:7:1}
 else
-	PUERTO=7
+	PORT=7
 fi
+
+TESSERA_PORT="900$PORT"
+TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
+OTHER_NODES="`cat ${TESTNET_DIR}/identities/TESSERA_NODES`"
+generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" "${PEER_NUMBER}" > /network/"$NODE_NAME"/tessera/tessera.json
+	exit
+
 
 TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
 OTHER_NODES="`cat ${TESTNET_DIR}/identities/TESSERA_NODES`"
-GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PUERTO --port 2100$PUERTO --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
-TESSERA_PORT="900$PUERTO"
+GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
+TESSERA_PORT="900$PORT"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
 	# TODO: Add every regular node for the tessera communication
-	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
+	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" "${PEER_NUMBER}" > /network/"$NODE_NAME"/tessera/tessera.json
 	PWD="$(pwd)"
 	nohup #TODO: tessera command (using the alias from start_network) tessera-node /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
 	check_port $TESSERA_PORT

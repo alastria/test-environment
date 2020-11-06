@@ -37,7 +37,7 @@ start_faulty_validator() {
         echo "[*] Starting faulty node"
         ./bin/start_faulty_node.sh validator1 $FAULTY_MODE
     else
-        ./bin/start_node.sh validator1
+        ./bin/start_node.sh validator1 $VAL_NUM
     fi
 }
 
@@ -45,14 +45,14 @@ start_validators () {
     VAL_NUM=$1
     echo "[*] Starting validator nodes"
     if [ "$VAL_NUM" -eq "1" ]; then
-        ./bin/start_node.sh main
+        ./bin/start_node.sh main $VAL_NUM
     elif [ "$VAL_NUM" -eq "2" ]; then
-        ./bin/start_node.sh main
+        ./bin/start_node.sh main $VAL_NUM
         start_faulty_validator
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
-        ./bin/start_node.sh main
+        ./bin/start_node.sh main $VAL_NUM
         start_faulty_validator
         sleep 15
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
@@ -70,28 +70,18 @@ start_gws () {
     GW_NUM=$1
     echo "[*] Starting gw nodes"
     alias tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
-    if [ "$GW_NUM" -eq "1" ]; then
-        ./bin/start_node.sh general1
-    elif [ "$GW_NUM" -eq "2" ]; then
-        ./bin/start_node.sh general1
-        ./bin/start_node.sh general2
 
-    elif [ "$GW_NUM" -eq "3" ]; then
-        ./bin/start_node.sh general1
-        ./bin/start_node.sh general2
-        ./bin/start_node.sh general3
-    elif [ "$GW_NUM" -eq "4" ]; then
-        ./bin/start_node.sh general1
-        ./bin/start_node.sh general2
-        ./bin/start_node.sh general3
-        ./bin/start_node.sh general4
-    else
+    if [ "$GW_NUM" -gt "4" ]; then
         echo "[!!] Number of validators not supported. Please contact @arochaga or any Alastria member for support"
         exit
     fi
+    for (( node=1; node<=$GW_NUM; node++ ))
+    do
+        ./bin/start_node.sh general$node $GW_NUM
+    done
 }
 
-start_validators $2 #$4 $5
+# start_validators $2 #$4 $5
 start_gws $3
 
 set +u
