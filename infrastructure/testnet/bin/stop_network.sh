@@ -3,7 +3,7 @@ set -u
 set -e
 
 pkill -f geth
-pkill -f constellation-node
+pkill -f java
 
 set +u
 set +e

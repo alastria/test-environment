@@ -35,7 +35,7 @@ info "Installing software..."
     apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 apt-get install -y software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat docker docker-compose nodejs openjdk-11-jdk mysql-server
-apt-get install -y libjffi-jni #! PROVISIONAL
+apt-get install -y libjffi-jni #! TODO PROVISIONAL
 npm install -g truffle@5.1.48
 npm install -g keythereum@1.2.0
 mavenver="3.6.3"
@@ -66,15 +66,14 @@ mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb DEFAULT CHARACTER SET 
 mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb_test DEFAULT CHARACTER SET utf8;"
 # DB users and permissions
 mysql -uroot <<< "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '1234'"
-mysql -uroot -p1234 <<< "CREATE USER 'root'@'10.0.2.2' IDENTIFIED BY '1234'"
-mysql -uroot -p1234 <<< "GRANT ALL PRIVILEGES ON *.* TO 'root'@'10.0.2.2'"
+mysql -uroot -p1234 <<< "CREATE USER 'root'@'*' IDENTIFIED BY '1234'"
+mysql -uroot -p1234 <<< "GRANT ALL PRIVILEGES ON *.* TO 'root'@'*'"
 mysql -uroot -p1234 <<< "CREATE USER 'tessera'@'localhost' IDENTIFIED BY '1234'"
 mysql -uroot -p1234 <<< "GRANT ALL PRIVILEGES ON *.* TO 'tessera'@'localhost'"
 mysql -uroot -p1234 <<< "FLUSH PRIVILEGES"
 echo "Done!"
 info "Restart mysqld to get new config"
 service mysql restart
-
 
 info "Cloning and initializing testnet related repositories..."
 # cd /home/vagrant

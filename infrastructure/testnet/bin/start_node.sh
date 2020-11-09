@@ -136,7 +136,8 @@ else
 	PWD="$(pwd)"
 	nohup $tessera -configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
 	check_port $TESSERA_PORT
-	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	# nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/c.ipc geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
 echo "Verify if ${TESTNET_DIR}/logs/ have new files."
@@ -147,3 +148,4 @@ set +e
 # TODO: Esto funciona en consola: sudo env PRIVATE_CONFIG=ignore geth --datadir network/main/ --networkid 9535753591 --identity network/main/IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 22000 --port 21000 --targetgaslimit 18446744073709551615
 
 # TODO: start geth with --nousb option, as it erorrs a lot "Failed to enumerate USB devices". This does not impact in the initialization, however.
+# TODO: check $GLOBAL_ARGS for starting general nodes.
