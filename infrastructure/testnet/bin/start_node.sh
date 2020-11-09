@@ -36,6 +36,8 @@ generate_conf() {
 
    #define the template
    # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
+   #TODO: encrypt password: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/#database
+   #TODO: see also: https://github.com/ConsenSys/tessera/tree/tessera-20.10.0#obfuscate-database-password-in-config-file
    cat << EOF
 	{
 		"serverConfigs": [
@@ -43,7 +45,15 @@ generate_conf() {
 			"app": "Q2T",
 			"enabled": true,
 			"serverAddress": "unix:$PWD/$NODE_NAME/tessera/c.ipc",
-			"bindingAddress": "http://$NODE_IP:$TESSERA_PORT/",
+			"communicationType" : "REST"
+			},
+			{
+			"app": "P2P",
+			"enabled": true,
+			"serverAddress": "http://$NODE_IP:$TESSERA_PORT/",
+			"sslConfig": {
+               "tls": "OFF"
+           	},
 			"communicationType" : "REST"
 			}
 		],
@@ -71,20 +81,15 @@ EOF
 					"publicKeyPath": "$PWD/$NODE_NAME/tessera/keystore/node.pub"
 				}
 			]
-		
-
-}
-}
+      	},
+		"jdbc": {
+			"username": "tessera",
+			"password": "1234",
+			"url": "jdbc:mysql://localhost:3306/testnetdb",
+			"autoCreateTables": true
+		}
+	}
 EOF
-#       },
-# 		"jdbc": {
-# 			"username": "sa",
-# 			"password": "ENC(ujMeokIQ9UFHSuBYetfRjQTpZASgaua3)",
-# 			"url": "jdbc:mysql:/qdata/c1/db1",
-# 			"autoCreateTables": true
-# 		}
-# 	}
-# EOF
 	}
 
 check_port() {
@@ -119,7 +124,8 @@ else
 	PORT=7
 fi
 
-tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
+# tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
+tessera="java -cp /home/vagrant/mysql.jar:/home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar:. com.quorum.tessera.launcher.Main"
 TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
 GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 TESSERA_PORT="900$PORT"
@@ -128,7 +134,7 @@ if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == 
 else
 	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "${PEER_NUMBER}" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
 	PWD="$(pwd)"
-	nohup $tessera --configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
+	nohup $tessera -configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
 	check_port $TESSERA_PORT
 	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi

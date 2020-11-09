@@ -49,7 +49,7 @@ start_validators () {
     elif [ "$VAL_NUM" -eq "2" ]; then
         ./bin/start_node.sh main $VAL_NUM
         start_faulty_validator
-        sleep 15
+        sleep 5
         geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
         ./bin/start_node.sh main $VAL_NUM
