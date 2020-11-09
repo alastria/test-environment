@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
 RUN sudo bash nodesource_setup.sh
 RUN sudo cp /usr/lib/x86_64-linux-gnu/libsodium.so.23.1.0 /usr/lib/x86_64-linux-gnu/libsodium.so.18
+RUN npm install -g truffle@5.1.48
+RUN npm install -g keythereum@1.2.0
 # RUN ln -s /usr/bin/nodejs /usr/bin/node
 # Copy installation script
 COPY . /opt
@@ -44,10 +46,10 @@ EXPOSE 8443/tcp
 # Netstats port
 EXPOSE 3000/tcp
 # Constellation ports
-EXPOSE 9000-9110/tcp
+EXPOSE 9000-9010/tcp
 # Communication between geth processes
-EXPOSE 21000-21110/tcp
-EXPOSE 21000-21110/udp
+EXPOSE 21000-21010/tcp
+EXPOSE 21000-21010/udp
 # RPC
 EXPOSE 22000-22010/tcp
 
