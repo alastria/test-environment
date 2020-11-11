@@ -34,6 +34,8 @@ generate_conf() {
    PWD="$4"
    NODE_NAME="$5"
 
+   mysql -uroot -p1234 <<< "CREATE DATABASE IF NOT EXISTS testnet_$NODE_NAME DEFAULT CHARACTER SET utf8;"
+
    #define the template
    # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
    #TODO: encrypt password: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/#database
@@ -85,7 +87,7 @@ EOF
 		"jdbc": {
 			"username": "tessera",
 			"password": "1234",
-			"url": "jdbc:mysql://localhost:3306/testnetdb",
+			"url": "jdbc:mysql://localhost:3306/testnet_$NODE_NAME",
 			"autoCreateTables": true
 		}
 	}

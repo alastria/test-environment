@@ -38,6 +38,9 @@ apt-get install -y software-properties-common unzip wget git make gcc libsodium-
 apt-get install -y libjffi-jni #! TODO PROVISIONAL
 npm install -g truffle@5.1.48
 npm install -g keythereum@1.2.0
+npm install -g ethereumjs-tx@2.1.2
+npm install -g crypto-js@4.0.0
+npm install -g web3@1.3.0
 mavenver="3.6.3"
 echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /etc/bash.bashrc
 wget "https://ftp.cixug.es/apache/maven/maven-3/$mavenver/binaries/apache-maven-$mavenver-bin.zip" -O /opt/maven.zip --progress=bar:force
@@ -62,8 +65,8 @@ info "Configure MySQL"
 echo $'[mysqld]\nsql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"' >> /etc/mysql/my.cnf
 sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
 # Create DBs
-mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb DEFAULT CHARACTER SET utf8;"
-mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb_test DEFAULT CHARACTER SET utf8;"
+# mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb DEFAULT CHARACTER SET utf8;"
+# mysql -uroot <<< "CREATE DATABASE IF NOT EXISTS testnetdb_test DEFAULT CHARACTER SET utf8;"
 # DB users and permissions
 mysql -uroot <<< "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '1234'"
 mysql -uroot -p1234 <<< "CREATE USER 'root'@'*' IDENTIFIED BY '1234'"
