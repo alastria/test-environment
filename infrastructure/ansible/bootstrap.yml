@@ -92,11 +92,12 @@
     remote_src: yes
 
 # Quorum
+# git checkout af7525189f2cee801ef6673d438b8577c8c5aa34 in previous version: 94e1e31eb6a97e08dff4e44a8695dab1252ca3bc and repo: https://github.com/alastria/quorum.git
 - name: Clone Quorum repo
   git:
-    repo: 'https://github.com/alastria/quorum.git'
+    repo: 'https://github.com/ConsenSys/quorum.git'
     dest: '{{ project_path }}/quorum'
-    version: '94e1e31eb6a97e08dff4e44a8695dab1252ca3bc'
+    version: 'af7525189f2cee801ef6673d438b8577c8c5aa34'
     force: yes
     accept_hostkey: yes
 
