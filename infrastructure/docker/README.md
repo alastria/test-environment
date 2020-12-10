@@ -16,7 +16,7 @@ You can execute multiple tasks provided by the [Makefile](Makefile).
 | `build-alastria`        	| Build the Alastria node image                                                	|
 | `install-test-complete` 	| Execute the Alastria node indicated by it's type, name, and different ports 	|
 | `install-test-basic`    	| Execute the Alastria node indicated by it's type and name                    	|
-| `complete`            	| Execute a netwwork with 2 Validators and 3 regular nodes                   	|
+| `complete`            	| Execute a network with 2 Validators and 3 regular nodes                   	|
 | `node-shell`            	| Obtain a shell into a running node                                           	|
 | `clean`                   | Remove **all** Alastria docker images                                         |
 | `stop`                    | Stop **all** Alastria running nodes                                           |
