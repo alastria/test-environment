@@ -1,7 +1,5 @@
 //b. Each thread has the same account and only one contract per node.
-var fs = require('fs');
 // var Counter = artifacts.require("TestAlastriaCounter");
-
 
 module.exports = async function(deployer) {
     const fs = require('fs');
@@ -13,23 +11,48 @@ module.exports = async function(deployer) {
     const re = /^0x[0-9A-Fa-f]{40}/g;
     var privateKey = '';
 
+//TODO: it does not work the account generation from this script
+//     function generateKey(len = 64) {
+//         n = Math.floor( Math.random() * (16) ),
+//         randomKey = n.toString(16);
+//     while ( randomKey.length < len ) {
+//         randomKey = randomKey + generateKey( len -1 );
+//     }
+//     return randomKey;
+//   };
+
+//     function createAccount(password){
+//         var privateKey = generateKey();
+//         var PrivKeyBuffer = new Buffer('0x' + privateKey);
+//         console.log(privateKey);
+//         console.log(PrivKeyBuffer);
+//         console.log(password);
+//         var testAccount = web3.eth.personal.importRawKey(String(privateKey), String(password)).then(console.log);
+//         // await new Promise(r => setTimeout(r, 20000));
+//         console.log(testAccount);
+//         console.log("Created new test account to perform the test with the password provided: " + testAccount);
+//         process.exit();
+//         return PrivKeyBuffer;
+//     }
+
     if(re.test(testAccount)) {
         console.log("Will try to use the account provided to perform the test: " + testAccount);
         } else if (Number.isInteger(Number(testAccount))){
             account = await web3.eth.personal.getAccounts();
             testAccount = account[testAccount];
+            if(re.test(testAccount)){
             console.log("Will try to use the account provided to perform the test: " + testAccount);
+            } else {
+                console.log("There was no such account. Will try to create a new one.");
+                console.log('Script need fixing, as that is not possible. Stopping execution. PLease, create the account and try again.');
+                process.exit();
+                // privateKey = createAccount(password);
+            }
     } else {
-        var privateKey = function(len = 64) {
-            n = Math.floor( Math.random() * (16) ),
-            randomKey = n.toString(16);
-        while ( randomKey.length < len ) {
-            randomKey = randomKey + randHex( len -1 );
-        }
-        return randomKey;
-      };
-        var testAccount = await web3.eth.personal.importRawKey(String(privateKey), String(password));
-        console.log("Created new test account to perform the test with the password provided: " + testAccount);
+        console.log("There was no such account. Will try to create a new one.");
+        console.log('Script need fixing, as that is not possible. Stopping execution. PLease, create the account and try again.');
+        process.exit();
+        // privateKey = createAccount(password);
     }
 
     if(!privateKey) {
@@ -38,144 +61,104 @@ module.exports = async function(deployer) {
         var keyObject = await keythereum.importFromFile(testAccount, datadir);
         var privateKey = await keythereum.recover(password, keyObject);
     }
-
     eval(fs.readFileSync('logFormat.js')+'');
     var counter = 0;
     var counter_i = null;
     console.log("Each contract generates " + repetitions + " trx.");
 
-//! /////////////////////////////////////////////////////////////////////
-//! "Contract será un nombre de contrato que se elegirá por línea de comandos. Hacer un condicional que usando letras o números elija qué contrato desplegar e nlugar de poner el literal. Luego relacionar ese comando con el nombre que toque, que será la variable "contract".
+    //! /////////////////////////////////////////////////////////////////////
+    //! "Contract será un nombre de contrato que se elegirá por línea de comandos. Hacer un condicional que usando letras o números elija qué contrato desplegar en lugar de poner el literal. Luego relacionar ese comando con el nombre que toque, que será la variable "contract".
     const path = require('path');
-    
-    // const solc = require('solc');
-    // const md5File = require('md5-file');
     const Web3 = require('web3');
     const Tx = require('ethereumjs-tx').Transaction;
-    // const SolidityFunction = require('web3/lib/web3/function');
-    // Retrieve the command line arguments
-    // let argv = require('minimist')(process.argv.slice(2));
-    let accounts = [{
-        address: testAccount,
-        key: privateKey
-    }];
-    let selectedHost = 'http://127.0.0.1:22000';
-    web3 = new Web3(new Web3.providers.HttpProvider(selectedHost));
-    let selectedAccountIndex = 0;
-    let gasPrice = web3.eth.gasPrice;
+    const httpConnection = 'http://127.0.0.1:22000';//TODO
+    web3 = new Web3(new Web3.providers.HttpProvider(httpConnection));
+    let gasPrice = web3.utils.toHex(web3.utils.toWei('0', 'gwei'));
+    // let gasPrice = web3.eth.gasPrice;
     let gasPriceHex = web3.utils.toHex(gasPrice);
     let gasLimitHex = web3.utils.toHex(6000000);
-    // let block = web3.eth.getBlock("latest");
-    let nonce = web3.eth.getTransactionCount(accounts[selectedAccountIndex].address, "pending");
+    let nonce = Math.floor( Math.random() * 100 );//web3.eth.getTransactionCount(testAccount, "pending");
     let nonceHex = web3.utils.toHex(nonce);
 
+    console.log('Completed initialization. Deploying contract...')
     await deployContract('B');
 
     async function deployContract(contract) {
-        // It will read the ABI & byte code contents from the JSON file in ./build/contracts/ folder
         let jsonName = contract + '.json';
         let jsonFile = './build/contracts/' + jsonName;
-        let result = false;
-        try {
-            result = fs.statSync(jsonFile);
-        } catch (error) {
-            console.log(error.message);
-            return false;
-        }
+        fs.statSync(jsonFile);
         // Read the JSON file contents
         let contractJsonContent = fs.readFileSync(jsonFile, 'utf8');
         let jsonParsed = await JSON.parse(contractJsonContent);
-
         // Retrieve the ABI and the bytecode and instantiate the transaction
         let abi = jsonParsed['abi'];
         let bytecode = jsonParsed['bytecode'];
         let contractInstance = new web3.eth.Contract(abi);
-        let contractDeployment = contractInstance.deploy({
-            data: bytecode,
-            // arguments: [,]
-        }).encodeABI();
-
+        let contractData = await contractInstance.deploy({
+                    data: bytecode,
+            });
+        let contractDeployment = contractData._deployData;
+        console.log('Data for the contract deployment: ' + contractDeployment);
+        // let rawTx = {
+        //     // nonce: nonceHex,
+        //     gasPrice: gasPriceHex,
+        //     gasLimit: gasLimitHex,
+        //     gas: web3.utils.toHex(800000),
+        //     data: contractDeployment,
+        //     // data: contractData,
+        //     from: testAccount
+        // };
         let rawTx = {
-            nonce: nonceHex,
-            gasPrice: gasPriceHex,
-            gasLimit: gasLimitHex,
-            data: contractDeployment,
-            // data: contractData,
-            // from: accounts[selectedAccountIndex].address
-        };
-        console.log(rawTx)
-        process.exit()
-
+            // nonce: nonceHex,
+            gas: web3.utils.toHex(800000),
+            data: bytecode,
+        }
         // Get the account private key, need to use it to sign the transaction later.
-        let privKey = new Buffer(accounts[selectedAccountIndex].key, 'hex')
-        let tx = new Tx(rawTx);
-
+        var tx = new Tx(rawTx, { hardfork: 'byzantium' });
         // Sign the transaction
-        tx.sign(privKey);
-        let serializedTx = tx.serialize();
+        await tx.sign(privateKey);
+        let signedTx = `0x${tx.serialize().toString('hex')}`;
         let receipt = null;
-
-        // console.log(serializedTx.toString('hex'));
-
+        console.log('Signed transaction raw: ');
+        console.log(tx);
+        console.log('Signed transaction prepared: ');
+        console.log(signedTx);
         // Submit the smart contract deployment transaction
-        web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), (err, hash) => {
-            if (err) { 
+        await web3.eth.sendSignedTransaction(signedTx, (err, hash) => {
+            if (err) {
                 console.log(err); return;
             }
-
             // Log the tx, you can explore status manually with eth.getTransaction()
             console.log('Contract creation tx: ' + hash);
-
             // Wait for the transaction to be mined
             while (receipt == null) {
-
                 receipt = web3.eth.getTransactionReceipt(hash);
-
                 // Simulate the sleep function
                 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1000);
             }
-
-            console.log('Contract address: ' + receipt.contractAddress);
-            console.log('Contract File: ' + contract);
-
-            // Update JSON
-            jsonOutput['contractAddress'] = receipt.contractAddress;
-
-            // Web frontend just need to have abi & contract address information
-            let webJsonOutput = {
-                'abi': abi,
-                'contractAddress': receipt.contractAddress
-            };
-
-            // let formattedJson = JSON.stringify(jsonOutput, null, 4);
-            // let formattedWebJson = JSON.stringify(webJsonOutput);
-
-            //console.log(formattedJson);
-            // fs.writeFileSync(jsonFile, formattedJson);
-            // fs.writeFileSync(webJsonFile, formattedWebJson);
-
-            console.log('==============================');
         });
+        console.log('Contract address: ' + receipt.contractAddress);
+        console.log('Contract File: ' + contract);
+        
+        // Update JSON
+        jsonOutput['contractAddress'] = receipt.contractAddress;
+        
+        let formattedJson = JSON.stringify(jsonOutput, null, 4);
+        let formattedWebJson = JSON.stringify(webJsonOutput);
+        
+        console.log(formattedJson);
+        fs.writeFileSync(jsonFile, formattedJson);
+        fs.writeFileSync(webJsonFile, formattedWebJson);
+        console.log('==============================');
+
+        // ).on('receipt', console.log);
+        // await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex')).on('receipt', console.log)
         return true;
     }
 }
 catch (e) {
 console.log(e);
 }
-
-    // if (typeof argv.deploy !== 'undefined') {
-    //     // Build contract
-
-    //     let contract = argv.deploy;
-
-    //     let result = deployContract(contract);
-    //     return;
-    // }
-
-    // console.log('End here.');
-
-
-
 
 
 // signedTx = await web3.eth.accounts.signTransaction({     
@@ -205,11 +188,6 @@ console.log(e);
     // tx.sign(privateKey)  
     // var serializedTx = '0x'+tx.serialize().toString('hex')  
     // web3.eth.sendRawTransaction(serializedTx, function(err, txHash){ console.log(err, txHash) })
-
-
-
-
-
 
 
 

@@ -2,7 +2,7 @@
 set -u
 set -e
 
-pkill -f geth
+pkill -f geth || true
 pkill -f java
 
 set +u

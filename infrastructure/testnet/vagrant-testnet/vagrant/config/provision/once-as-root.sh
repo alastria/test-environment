@@ -36,11 +36,11 @@ info "Installing software..."
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 apt-get install -y software-properties-common unzip wget git make gcc libsodium-dev build-essential libdb-dev zlib1g-dev libtinfo-dev libtinfo5 sysvbanner psmisc libleveldb-dev libdb5.3-dev dnsutils sudo netcat docker docker-compose nodejs openjdk-11-jdk mysql-server
 apt-get install -y libjffi-jni #! TODO PROVISIONAL
-npm install -g truffle@5.1.48
-npm install -g keythereum@1.2.0
-npm install -g ethereumjs-tx@2.1.2
-npm install -g crypto-js@4.0.0
-npm install -g web3@1.3.0
+npm install truffle@5.1.48 -g
+npm install keythereum@1.2.0 -g
+npm install ethereumjs-tx@2.1.2 -g
+npm install crypto-js@4.0.0 -g
+npm install web3@1.3.0 -g
 mavenver="3.6.3"
 echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> /etc/bash.bashrc
 wget "https://ftp.cixug.es/apache/maven/maven-3/$mavenver/binaries/apache-maven-$mavenver-bin.zip" -O /opt/maven.zip --progress=bar:force

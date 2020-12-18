@@ -11,12 +11,21 @@ module.exports = {
     }
   },
   networks: {
-    localhost: {
+    main: {
       host: "localhost",
       port: 22000,
       network_id: "*", // Match any network id
       gas: 0xfffff,
-      gasPrice: 0x0
+      gasPrice: 0x0,
+      from: "0xB50001FfA410F4D03663D69540c1C8e1C017e7e6"
+    },
+    validator1: {
+      host: "localhost",
+      port: 22005,
+      network_id: "*", // Match any network id
+      gas: 0xfffff,
+      gasPrice: 0x0,
+      from: "0xD8CfEA3B26B879f9D208975dFE8460F27520876b"
     },
     general1: {
       host: "localhost",
@@ -24,7 +33,7 @@ module.exports = {
       network_id: "*", // Match any network id
       gas: 0xfffff,
       gasPrice: 0x0,
-      from: "0x0defda53d6e0ba7627a4891b43737c5889e280cc"
+      // from: "0x0defda53d6e0ba7627a4891b43737c5889e280cc"
     },
     general2: {
       host: "localhost",
@@ -32,7 +41,15 @@ module.exports = {
       network_id: "*", // Match any network id
       gas: 0xfffff,
       gasPrice: 0x0,
-      from: "0xd2202fba136c2c57d55bfcf83a376ac2914954cb"
+      // from: "0xd2202fba136c2c57d55bfcf83a376ac2914954cb"
+    },
+    general3: {
+      host: "localhost",
+      port: 22003,
+      network_id: "*", // Match any network id
+      gas: 0xfffff,
+      gasPrice: 0x0,
+      // from: ""
     }
   }
 };

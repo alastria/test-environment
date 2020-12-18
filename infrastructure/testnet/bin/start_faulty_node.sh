@@ -28,6 +28,7 @@ ETH_STATS_IP="127.0.0.1"
 echo "[*] Starting $NODE_NAME"
 
 generate_conf() {
+	#TODO: modify this script to bring up faulty nodes.
    #define parameters which are passed in.
    NODE_IP="$1"
    TESSERA_PORT="$2"
@@ -112,6 +113,15 @@ TESSERA_PORT="900$PUERTO"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
 	nohup ./geth_faulty --datadir /network/"$NODE_NAME" $GLOBAL_ARGS $FAULTY_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${PWD}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
+
+	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "${PEER_NUMBER}" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
+	PWD="$(pwd)"
+	nohup $tessera -configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
+	check_port $TESSERA_PORT
+	# nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/c.ipc geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+
+
 	# TODO: Add every regular node for the tessera communication
 	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "$OTHER_NODES" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.conf
 	PWD="$(pwd)"

@@ -34,7 +34,7 @@ generate_conf() {
    PWD="$4"
    NODE_NAME="$5"
 
-   mysql -uroot -p1234 <<< "CREATE DATABASE IF NOT EXISTS testnet_$NODE_NAME DEFAULT CHARACTER SET utf8;"
+   mysql -uroot -p1234 <<< "CREATE DATABASE IF NOT EXISTS testnet_$NODE_NAME DEFAULT CHARACTER SET utf8;" > /dev/null 2>&1
 
    #define the template
    # ! SPECIFICATIONS: https://docs.tessera.consensys.net/en/latest/HowTo/Configure/Tessera/ !
@@ -101,13 +101,13 @@ check_port() {
 	set +u
 	set +e
 
+	echo "[*] Tessera is now initializing node at port $PORT_TO_TEST. Please, be patient..."
 	while [ $RETVAL -ne 0 ]
 	do
-		netcat -z -v localhost $PORT_TO_TEST
+		netcat -z -v localhost $PORT_TO_TEST > /dev/null 2>&1
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && echo "[*] tessera node at $PORT_TO_TEST is now up."
 		[ $RETVAL -ne 0 ] && sleep 1
-		
 	done
 
 	set -u
@@ -129,25 +129,25 @@ fi
 # tessera="java -jar /home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar"
 tessera="java -cp /home/vagrant/mysql.jar:/home/vagrant/tessera/tessera-dist/tessera-app/target/tessera-app-20.10.0-app.jar:. com.quorum.tessera.launcher.Main"
 TESTNET_DIR="/home/vagrant/test-environment/infrastructure/testnet"
-GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --targetgaslimit 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
+GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --nousb"
+# GLOBAL_ARGS="--networkid $NETID --identity $IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 2200$PORT --port 2100$PORT --targetgaslimit (DEPRECATED) 18446744073709551615 --ethstats $IDENTITY:bb98a0b6442386d0cdf8a31b267892c1@$ETH_STATS_IP:3000 "
 TESSERA_PORT="900$PORT"
 if [ "$NODE_NAME" == "main"  -o "$NODE_NAME" == "validator1" -o "$NODE_NAME" == "validator2" ]; then
-	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --mine --minerthreads 1 --syncmode "full" 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	ETHERBASE=$(cat /network/$NODE_NAME/etherbase.txt | grep -Po "0x[0-9A-Fa-f]{40}")
+	nohup env PRIVATE_CONFIG=ignore geth --datadir /network/"$NODE_NAME" $GLOBAL_ARGS --etherbase $ETHERBASE --mine --minerthreads 1 --syncmode "full" dumpconfig > /home/vagrant/test-environment/gethConfig$NODE_NAME.toml 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 else
 	generate_conf "${NODE_IP}" "${TESSERA_PORT}" "${PEER_NUMBER}" /network "${NODE_NAME}" > /network/"$NODE_NAME"/tessera/tessera.json
 	PWD="$(pwd)"
 	nohup $tessera -configfile /network/"$NODE_NAME"/tessera/tessera.json 2>> "${TESTNET_DIR}"/logs/tessera_"$NODE_NAME"_"${_TIME}".log &
 	check_port $TESSERA_PORT
 	# nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/tessera.json geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
-	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/c.ipc geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
+	nohup env PRIVATE_CONFIG=/network/"$NODE_NAME"/tessera/c.ipc geth --datadir /network/"$NODE_NAME" --debug $GLOBAL_ARGS dumpconfig > /home/vagrant/test-environment/gethConfig$NODE_NAME.toml 2>> "${TESTNET_DIR}"/logs/quorum_"$NODE_NAME"_"${_TIME}".log &
 fi
 
 echo "Verify if ${TESTNET_DIR}/logs/ have new files."
 
 set +u
 set +e
-
-# TODO: Esto funciona en consola: sudo env PRIVATE_CONFIG=ignore geth --datadir network/main/ --networkid 9535753591 --identity network/main/IDENTITY --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,istanbul --rpcport 22000 --port 21000 --targetgaslimit 18446744073709551615
 
 # TODO: start geth with --nousb option, as it erorrs a lot "Failed to enumerate USB devices". This does not impact in the initialization, however.
 # TODO: check $GLOBAL_ARGS for starting general nodes.

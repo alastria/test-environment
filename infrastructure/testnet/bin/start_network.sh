@@ -28,6 +28,9 @@ if ([ "clean" == "$1" ]); then
     echo "[*] Cleaning previous environments"
     ./bin/clean_env.sh
     ./bin/config_network.sh
+    echo "New network created from scratch."
+    echo "[*] Initializing quorum"
+    geth --nousb --datadir /network/ init ../common/genesis.json
 elif ([ "restart" == "$1" ]); then
     echo "[*] Restarting previous configuration"
 fi
@@ -44,33 +47,37 @@ start_faulty_validator() {
 start_validators () {
     VAL_NUM=$1
     echo "[*] Starting validator nodes"
+    mainaddress=$(cat /network/main/etherbase.txt | grep -Po "0x[0-9A-Fa-f]{40}")
+    validator1adderss=$(cat /network/validator1/etherbase.txt | grep -Po "0x[0-9A-Fa-f]{40}")
+    validator2address=$(cat /network/validator2/etherbase.txt | grep -Po "0x[0-9A-Fa-f]{40}") # ! It's not actually used anywhere
     if [ "$VAL_NUM" -eq "1" ]; then
         ./bin/start_node.sh main $VAL_NUM
     elif [ "$VAL_NUM" -eq "2" ]; then
         ./bin/start_node.sh main $VAL_NUM
         start_faulty_validator
         sleep 5
-        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
+        echo "Main etherbase Address: $mainaddress"
+        geth --exec 'istanbul.propose("0xb87dc349944cc47474775dde627a8a171fc94532", true)' attach /network/main/geth.ipc
     elif [ "$VAL_NUM" -eq "3" ]; then
         ./bin/start_node.sh main $VAL_NUM
         start_faulty_validator
         sleep 5
-        geth --exec 'istanbul.propose("0xB50001FfA410F4D03663D69540c1C8e1C017e7e6", true)' attach /network/main/geth.ipc
+        geth --exec 'istanbul.propose("0xb87dc349944cc47474775dde627a8a171fc94532", true)' attach /network/main/geth.ipc
         ./bin/start_node.sh validator2
         sleep 5
         geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach /network/main/geth.ipc
         geth --exec 'istanbul.propose("0xD8CfEA3B26B879f9D208975dFE8460F27520876b", true)' attach /network/validator1/geth.ipc
     else
-        echo "[!!] Number of validators not supported. Please contact @arochaga or any Alastria member for support"
+        echo "[!!] Number of validators not supported"
         exit
     fi
 }
 
 start_gws () {
     GW_NUM=$1
-    echo "[*] Starting gw nodes"
+    echo "[*] Starting gateway nodes"
     if [ "$GW_NUM" -gt "4" ]; then
-        echo "[!!] Number of validators not supported. Please contact @arochaga or any Alastria member for support"
+        echo "[!!] Number of general nodes not supported"
         exit
     fi
     for (( node=1; node<=$GW_NUM; node++ ))

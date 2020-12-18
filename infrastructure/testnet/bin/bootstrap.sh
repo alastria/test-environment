@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "[*] Executing alastria-node bootstrap"
 sudo bash -H bin/bootstrap-alastria-node.sh
-
+# TODO: change this
 if [ $ -eq 4 ]
     then
         echo "Script execution stopped. Check last message and try again"
