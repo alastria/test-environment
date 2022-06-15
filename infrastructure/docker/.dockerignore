@@ -1,6 +1,0 @@
-build
-README.md
-*.log
-Vagrantfile
-.vagrant/*
-.DS_Store

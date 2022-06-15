@@ -1,0 +1,141 @@
+#
+#
+#
+
+version: "3.7"
+
+services:
+
+  # validator 01
+  alastria-validator-01:
+    build:
+      context: ./alastria-node-validator
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey01
+        NODE_TYPE: validator
+    restart: unless-stopped
+    container_name: alastria-validator-01
+    ports:
+      - "21001:21001/tcp"
+      - "21001:21001/udp"
+    environment:
+      - NODE_NAME=alastria-validator-01
+      - NODE_PORT=21001
+      - NODE_TYPE=validator
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.11
+
+  # validator 02
+  alastria-validator-02:
+    build:
+      context: ./alastria-node-validator
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey02
+        NODE_TYPE: validator
+    restart: unless-stopped
+    container_name: alastria-validator-02
+    ports:
+      - "21002:21002/tcp"
+      - "21002:21002/udp"
+    environment:
+      - NODE_NAME=alastria-validator-02
+      - NODE_PORT=21002
+      - NODE_TYPE=validator
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.12
+
+  # validator 03
+  alastria-validator-03:
+    build:
+      context: ./alastria-node-validator
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey03
+        NODE_TYPE: validator
+    restart: unless-stopped
+    container_name: alastria-validator-03
+    ports:
+      - "21003:21003/tcp"
+      - "21003:21003/udp"
+    environment:
+      - NODE_NAME=alastria-validator-03
+      - NODE_PORT=21003
+      - NODE_TYPE=validator
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.13
+
+  # validator 04
+  alastria-validator-04:
+    build:
+      context: ./alastria-node-validator
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey04
+        NODE_TYPE: validator
+    restart: unless-stopped
+    container_name: alastria-validator-04
+    ports:
+      - "21004:21004/tcp"
+      - "21004:21004/udp"
+    environment:
+      - NODE_NAME=alastria-validator-04
+      - NODE_PORT=21004
+      - NODE_TYPE=validator
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.14
+
+  # bootnode-01
+  alastria-bootnode-01:
+    build:
+      context: ./alastria-node-bootnode
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey05
+        NODE_TYPE: bootnode
+    restart: unless-stopped
+    container_name: alastria-bootnode-01
+    ports:
+      - "21005:21005/tcp"
+      - "21005:21005/udp"
+    environment:
+      - NODE_NAME=alastria-bootnode-01
+      - NODE_PORT=21005
+      - NODE_TYPE=bootnode
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.15
+
+  # general-01
+  alastria-general-01:
+    build:
+      context: ./alastria-node-general
+      args:
+        NODE_VERSION: v21.1.0
+        NODE_KEY: nodekey06
+        NODE_TYPE: general
+    restart: unless-stopped
+    container_name: alastria-general-01
+    ports:
+      - "21006:21006/tcp"
+      - "21006:21006/udp"
+    environment:
+      - NODE_NAME=alastria-general-01
+      - NODE_PORT=21006
+      - NODE_TYPE=general
+    networks:
+      alastria_net:
+        ipv4_address: 172.24.0.16
+
+networks:
+  alastria_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.24.0.0/24
