@@ -24,16 +24,12 @@ If you want to contribute, you detect any bug or you want to give us feedback ab
 do not hesitate in contacting us, or posting an issue. 
 
 ## RLT Data
-Fist IBFT signer:
+Fist IBFT signers:
 ```
-0x12880f549a47b8374ae6155063e39971c5438871
-```
-
-Add new signers:
-```
-istanbul.propose("0x067d60b8b8569299ce766760c0347011dc1fba0b", true)
-istanbul.propose("0xf78341e7dc842f525436e8c5657de2eece373b91", true)
-istanbul.propose("0x21c544e17bdddea40fc8889c60b29de25805f555", true)
+nodekey01 - 0x12880f549a47b8374ae6155063e39971c5438871
+nodekey02 - 0xf78341e7dc842f525436e8c5657de2eece373b91
+nodekey03 - 0x21c544e17bdddea40fc8889c60b29de25805f555
+nodekey04 - 0x067d60b8b8569299ce766760c0347011dc1fba0b
 ```
 
 To get working all the validator nodes, please, use 
