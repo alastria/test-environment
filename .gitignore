@@ -1,18 +1,1 @@
-infrastructure/testnet/tls*
-infrastructure/testnet/network/*/
-infrastructure/testnet/logs/*
-infrastructure/testnet/nohup.out
-infrastructure/testnet/alastria-node
-infrastructure/testnet/eth-netstats
-infrastructure/testnet/geth_faulty
-
-.vagrant/
-build
-.DS_Store
-*.log
-*.retry
-
-# Terraform
-*.tfvars
-*.tfstate
-.terraform/
+bare-metal/data
