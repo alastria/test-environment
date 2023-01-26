@@ -1,39 +1,56 @@
 #!/bin/bash
 
-#NODE_NAME=alastria-validator-01
-#NODE_VERSION=v21.1.0
-#NODE_KEY=nodekey01
-#NODE_TYPE=validator
-#NODE_PORT=21001
-
 NODE_NAME=${1}
 NODE_VERSION=${2}
 NODE_KEY=${3}
 NODE_TYPE=${4}
-NODE_PORT=${5}
+P2P_PORT=${5}
+RPC_PORT=${6}
 
-#apt-get update 
-#apt-get -y install wget nano vim cron && apt-get -y autoremove && apt-get -y clean
-#apt-get install -y golang
+wget -O besu-${NODE_VERSION}.tar.gz https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/${NODE_VERSION}/besu-${NODE_VERSION}.tar.gz
 
-wget -O geth_${NODE_VERSION}_linux_amd64.tar.gz https://artifacts.consensys.net/public/go-quorum/raw/versions/${NODE_VERSION}/geth_${NODE_VERSION}_linux_amd64.tar.gz
+rm -rf ./data/${NODE_NAME} && mkdir -p ./data/${NODE_NAME}
 
-##
-rm -rf ./data/${NODE_NAME}
+tar zxvf besu-${NODE_VERSION}.tar.gz -C ./data/${NODE_NAME}
 
-mkdir -p ./data/${NODE_NAME}/bin
-tar zxvf geth_${NODE_VERSION}_linux_amd64.tar.gz -C ./data/${NODE_NAME}/bin
+mkdir -p ./data/${NODE_NAME}/keys
 
-mkdir -p ./data/${NODE_NAME}/geth
+cp ${NODE_KEY} ./data/${NODE_NAME}/keys/key
+./data/${NODE_NAME}/besu-${NODE_VERSION}/bin/besu --data-path=./data/${NODE_NAME}/keys public-key export --to=./data/${NODE_NAME}/keys/key.pub
+./data/${NODE_NAME}/besu-${NODE_VERSION}/bin/besu --data-path=./data/${NODE_NAME}/keys public-key export-address --to=./data/${NODE_NAME}/keys/nodeAddress
 
-cp ${NODE_KEY} ./data/${NODE_NAME}/geth/nodekey
-cp nodes-${NODE_TYPE}.json ./data/${NODE_NAME}/static-nodes.json
-cp nodes-${NODE_TYPE}.json ./data/${NODE_NAME}/permissioned-nodes.json
+mkdir -p ./data/${NODE_NAME}/config
 
-./data/${NODE_NAME}/bin/geth --datadir ./data/${NODE_NAME} init ./genesis.json
+cp ./genesis.json ./data/${NODE_NAME}/config/genesis.json
+case ${NODE_TYPE} in
+	"validator")
+		network_nodes=$(echo "[$(cat ./validator-nodes.json), $(cat ./regular-nodes.json)]" | jq '[.[0][], .[1][]]' | jq --arg ENODE "$(cat ./data/${NODE_NAME}/keys/key.pub | cut -c 3-)" 'del(.[] | select(. | contains($ENODE)))')
+		echo "nodes-allowlist=$network_nodes" > ./data/${NODE_NAME}/config/allowed-nodes.toml
+		echo $network_nodes > ./data/${NODE_NAME}/config/static-nodes.json
+	;;
+	"regular")
+		echo "nodes-allowlist=$(cat ./validator-nodes.json)" > ./data/${NODE_NAME}/config/allowed-nodes.toml
+		cp ./validator-nodes.json ./data/${NODE_NAME}/config/static-nodes.json
+	;;
+esac
 
-source ./geth.common.sh
-source ./geth.node.${NODE_TYPE}.sh
-
-export PRIVATE_CONFIG="ignore"
-./data/${NODE_NAME}/bin/geth --datadir ./data/${NODE_NAME} ${GLOBAL_ARGS} ${METRICS} ${NODE_ARGS} ${LOCAL_ARGS} > ./data/${NODE_NAME}/log
+./data/${NODE_NAME}/besu-${NODE_VERSION}/bin/besu \
+	--logging=INFO \
+	--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888 \
+	--permissions-accounts-contract-enabled=false \
+	--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999 \
+	--permissions-nodes-contract-enabled=false \
+	--data-path=./data/${NODE_NAME} \
+	--node-private-key-file=./data/${NODE_NAME}/keys/key \
+	--genesis-file=./data/${NODE_NAME}/config/genesis.json \
+	--p2p-port=${P2P_PORT} \
+	--min-gas-price=0 \
+	--permissions-nodes-config-file-enabled=true \
+	--permissions-nodes-config-file=./data/${NODE_NAME}/config/allowed-nodes.toml \
+	--discovery-enabled=false \
+	--static-nodes-file=./data/${NODE_NAME}/config/static-nodes.json \
+	--rpc-http-enabled=true \
+	--rpc-http-api=ETH,NET,WEB3,ADMIN,IBFT,PERM \
+	--rpc-http-port=${RPC_PORT} \
+	--rpc-http-host=0.0.0.0 \
+	--rpc-http-cors-origins="*"
