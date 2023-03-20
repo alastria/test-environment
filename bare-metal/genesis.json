@@ -6,6 +6,15 @@
       "blockperiodseconds": 1,
       "epochlength": 30000,
       "requesttimeoutseconds": 10
+    },
+    "transitions": {
+      "ibft2": [
+        {
+          "block": 600,
+          "blockperiodseconds": 3,
+          "requesttimeoutseconds": 9
+        }
+      ]
     }
   },
   "nonce": "0x0",
