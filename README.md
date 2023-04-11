@@ -1,6 +1,6 @@
-# Alastria (Quorum) Test Environments
+# Alastria (Quorum & Besu) Test Environments
 In this repository you will find all the tools required to test, develop and experiment
-with Alastria's GoQuorum network infrastructure on the Alastria Telsius network.
+with Alastria's QBFT network infrastructure on the Alastria network using both GoQuorum and BESU (WIP) client.
 
 ## Enodes
 
@@ -24,7 +24,7 @@ If you want to contribute, you detect any bug or you want to give us feedback ab
 do not hesitate in contacting us, or posting an issue. 
 
 ## RLT Data
-Fist IBFT signers:
+Fist QBFT signers:
 ```
 nodekey01 - 0x12880f549a47b8374ae6155063e39971c5438871
 nodekey02 - 0xf78341e7dc842f525436e8c5657de2eece373b91
@@ -32,39 +32,94 @@ nodekey03 - 0x21c544e17bdddea40fc8889c60b29de25805f555
 nodekey04 - 0x067d60b8b8569299ce766760c0347011dc1fba0b
 ```
 
-To get working all the validator nodes, please, use 
+To get working all the validator nodes, please, use
 
 * git@github.com:ConsenSys/istanbul-tools.git
 
 for generating the recursive length prefix (RLP) for the network.
 
-## Option 1 - Docker Compose
-
-Start infraestructure:
+1) Install QBFT tools:
 
 ```
-$ cd docker-compose
-$ docker-compose up -d
+$ make qbft
 ```
 
-Edit docker-composer.yaml to fine tunning of version, port,...
-
-Connect to a running geth:
+2) Use node address to get a TOML for the fist block:
 
 ```
-$ docker exec -it alastria-validator-01 geth attach /root/alastria/data/geth.ipc
+$ cat > list.toml 
+vanity = "0x00"
+validators = [
+"0x12880f549a47b8374ae6155063e39971c5438871",
+"0xf78341e7dc842f525436e8c5657de2eece373b91",
+"0x21c544e17bdddea40fc8889c60b29de25805f555",
+"0x067d60b8b8569299ce766760c0347011dc1fba0b"
+]
 ```
 
-## Option 2 - Bare Metal
+3) Generate extradata for QBFT
+
+```
+$ ./build/bin/qbft extra encode --config list.toml
+Encoded qbft extra-data: 0xf87aa00000000000000000000000000000000000000000000000000000000000000000f8549412880f549a47b8374ae6155063e39971c543887194f78341e7dc842f525436e8c5657de2eece373b919421c544e17bdddea40fc8889c60b29de25805f55594067d60b8b8569299ce766760c0347011dc1fba0bc080c0
+```
+
+4) Get a genesis.json example, and the provided extradata:
+
+```
+$ ./build/bin/qbft setup > genesis.json
+$ cat genesis.json
+
+{
+    "config": {
+        "chainId": 10,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "istanbul": {
+            "epoch": 30000,
+            "policy": 0,
+            "ceil2Nby3Block": 0,
+            "testQBFTBlock": 0
+        },
+        "isQuorum": true,
+        "txnSizeLimit": 64,
+        "maxCodeSize": 0,
+        "qip714Block": 0,
+        "isMPS": false
+    },
+    "nonce": "0x0",
+    "timestamp": "0x6435cf9c",
+    "extraData": "0xf87aa00000000000000000000000000000000000000000000000000000000000000000f8549412880f549a47b8374ae6155063e39971c543887194f78341e7dc842f525436e8c5657de2eece373b919421c544e17bdddea40fc8889c60b29de25805f55594067d60b8b8569299ce766760c0347011dc1fba0bc080c0",
+    "gasLimit": "0xe0000000",
+    "difficulty": "0x1",
+    "mixHash": "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365",
+    "coinbase": "0x0000000000000000000000000000000000000000",
+    "alloc": {},
+    "number": "0x0",
+    "gasUsed": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}
+```
+
+## Option 1 - Bare Metal
+
+QBFT its implemented in GoQuorum v21.7.0, https://github.com/ConsenSys/quorum/tree/v21.7.0
 
 ```
 $ cd bare-metal
-$ ./nodeStart.sh alastria-validator-01 v21.1.0 nodekey01 validator 21001
-$ ./nodeStart.sh alastria-validator-02 v21.1.0 nodekey02 validator 21002
-$ ./nodeStart.sh alastria-validator-03 v21.1.0 nodekey03 validator 21003
-$ ./nodeStart.sh alastria-validator-04 v21.1.0 nodekey04 validator 21004
-$ ./nodeStart.sh alastria-bootnode-01  v21.1.0 nodekey05 bootnode  21005
-$ ./nodeStart.sh alastria-general-06   v21.1.0 nodekey06 general   21006
+$ ./nodeStart.sh alastria-validator-01 v21.7.0 nodekey01 validator 21001
+$ ./nodeStart.sh alastria-validator-02 v21.7.0 nodekey02 validator 21002
+$ ./nodeStart.sh alastria-validator-03 v21.7.0 nodekey03 validator 21003
+$ ./nodeStart.sh alastria-validator-04 v21.7.0 nodekey04 validator 21004
+$ ./nodeStart.sh alastria-bootnode-01  v21.7.0 nodekey05 bootnode  21005
+$ ./nodeStart.sh alastria-general-06   v21.7.0 nodekey06 general   21006
 ```
 
 Edit args in nodeStart.sh to fine tunning of version, port,...
@@ -73,4 +128,17 @@ Connect to a running geth:
 
 ```
 $ ./data/alastria-validator-01/bin/geth attach ./data/alastria-validator-01/geth.ipc
+```
+
+```
+> istanbul.getSnapshot()
+{ 
+  epoch: 30000,
+  hash: "0x8fc1734d2bc3e02d1485281e704351e0596cc380f815f7f16657586d13b8308d",
+  number: 1561,
+  policy: 0,
+  tally: {},
+  validators: ["0x067d60b8b8569299ce766760c0347011dc1fba0b", "0x12880f549a47b8374ae6155063e39971c5438871", "0x21c544e17bdddea40fc8889c60b29de25805f555", "0xf78341e7dc842f525436e8c5657de2eece373b91"],
+  votes: []
+}
 ```
