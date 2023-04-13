@@ -34,7 +34,7 @@ nodekey04 - 0x067d60b8b8569299ce766760c0347011dc1fba0b
 
 To get working all the validator nodes, please, use
 
-* git@github.com:ConsenSys/istanbul-tools.git
+* git@github.com:ConsenSys/istanbul-tools.git (or instead, https://www.npmjs.com/package/quorum-genesis-tool)
 
 for generating the recursive length prefix (RLP) for the network.
 
