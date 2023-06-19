@@ -53,4 +53,6 @@ esac
 	--rpc-http-api=ETH,NET,WEB3,ADMIN,IBFT,PERM \
 	--rpc-http-port=${RPC_PORT} \
 	--rpc-http-host=0.0.0.0 \
-	--rpc-http-cors-origins="*"
+	--rpc-http-cors-origins="*" \
+	--rpc-http-authentication-enabled=false \
+	--host-allowlist="*"
